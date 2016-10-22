@@ -3,6 +3,7 @@ from Build_database import build_database
 
 if __name__ == '__main__':
     sqldb = './hospital.db'
-    conn, c = connect(sqldb)
+    conn = sqlite3.connect(sqldb)
+    c = conn.cursor()
 
-    build_database(c)
+    build_database(conn, c)
