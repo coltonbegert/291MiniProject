@@ -6,9 +6,9 @@ When run from terminal, type $ python2 hospital.py ./My_different_data.sql to lo
 if no second path is supplied, data will default to our fake test data
 '''
 def main(argv):
-    if len(argv) > 1:
+    try:
         Build_Database(argv[1])
-    else:
+    except:
         Build_Database()
         
 if __name__ == '__main__':
