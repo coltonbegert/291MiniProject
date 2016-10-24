@@ -1,13 +1,28 @@
+/*
+passwords are as follows, encrypted using sha224
+name	username	password (case sensitive)	
+
+Phil 	PugLove8 	dragon
+Mehmet	OzDaddy		ILoveFakeMedicine
+Jekyll	Doctor		Dpassword
+Joy		Joy1		Baseball
+Marge	Houliha1	rosy1168
+Jackie	Nurse		Npassword
+Abraham	Jericho		qwerty
+Howard	Serious		letmein
+Paul	Admin		Apassword
+*/
+
 INSERT INTO staff  VALUES
-('14334', 'D', 'Phil McGraw', 'PugLove8', 'These Need Hashing'),
-('14479', 'D', 'Mehmet Oz', 'OzDaddy', 'ILoveFakeMedicine'),
-('14589', 'D', 'Henry Jekyll', 'X_jake_X', 'superman'),
-('37225', 'N', 'Nurse Joy', 'Joy1', 'Joy123'),
-('37698', 'N', 'Marge Houlihan', 'Houliha1', 'dogname'),
-('37195', 'N', 'Jackie Chan', 'Chan1', 'mustang'),
-('63185', 'A', 'Abraham Jeffers', 'Jericho', 'qwerty'),
-('63691', 'A', 'Howard Stern', 'Serious', 'letmein'),
-('63215', 'A', 'Paul Newman', 'Admin', 'password123');
+('14334', 'D', 'Phil McGraw', 'PugLove8', 'e52ea8a5297a7350df2d19689babfaefa7e2e53890f83434d633cd54'),
+('14479', 'D', 'Mehmet Oz', 'OzDaddy', '5d88feb8061b72241d46c093a5b30a0574f917fba44a6702f1671b6b'),
+('14589', 'D', 'Henry Jekyll', 'Doctor', '2e81233d2741064532015b6c200bb5dba058a14b4ae4e3fc4c48a36b'),
+('37225', 'N', 'Nurse Joy', 'Joy1', '1962ed21f0f3187b67eb3cac6f2a2a26dffdc907a654bacb23c26422'),
+('37698', 'N', 'Marge Houlihan', 'Houliha1', '5bbfd7df86949584aa35646fb912db35f80c924266d3fda25a3c825c'),
+('37195', 'N', 'Jackie Chan', 'Nurse', '99faea5cc78ce96c261d4b6cccbb10ea28df7da217dfbafe772b08c8'),
+('63185', 'A', 'Abraham Jeffers', 'Jericho', '5154aaa49392fb275ce7e12a7d3e00901cf9cf3ab10491673f97322f'),
+('63691', 'A', 'Howard Stern', 'Serious', 'aad8b4393cadaef52ce00a7bbc6711298b7de27a3dc248d01fc38272'),
+('63215', 'A', 'Paul Newman', 'Admin', '2589b66a2e8652e06bffd9a0bc7491edda66716b411e77379627cc3a');
 
 INSERT INTO patients VALUES
 ('15384','Angelina Jolie','18-39','123-120 ST, Edmonton, Alberta','7801234567','7801234567'),
