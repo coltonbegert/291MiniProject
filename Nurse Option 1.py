@@ -74,7 +74,22 @@ def nurse_option1():
         conn.commit()
         
 
-    #selects the first unused chart number from 00001 to 99999        
+    #selects the first unused chart number from 00001 to 99999
+    c.execute('SELECT chart_id FROM charts WHERE hcno=:hcno AND edate=:edate ORDER BY adate DESC', {'hcno':hcno, 'edate':'Null'})
+    chart_id = str(c.fetchone()).strip("(u',)")
+    
+    if chart_id != str(None):
+        print "Found chart with chart id", chart_id
+        question = raw_input("Would you like to close this chart(Y/N)?: ")
+        if question.upper() == 'Y':
+            edate = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            c.execute('UPDATE charts SET edate=:edate WHERE chart_id=:chart_id', {'edate':edate, 'chart_id':chart_id} )
+        else:
+            print "The chart stays open"
+            return 0
+            
+        
+        
     for i in range(1, 100000):
         chart_id = str(i).zfill(5) #what zfill does: 1 turns into 00001, 100 turns into 00100, 10000 and higher remain the same
         chart_id_format = (chart_id, )
@@ -88,18 +103,14 @@ def nurse_option1():
     try:
         c.executemany('INSERT INTO charts VALUES (?,?,?,?)', insertion)
         conn.commit()
-        print "\nCreated chart for patient with following information:"
-        print "--------------------------------------------------------"
+        print "\nCreated new chart for patient with following information:"
+        print "----------------------------------------------------------"
         print "Chart ID:           ", chart_id
         print "Health Care Number: ", hcno
         print "Date Opened:        ", strftime("%A, %d %B %Y %H:%M:%S", gmtime())
-        print "--------------------------------------------------------"
+        print "----------------------------------------------------------"
     except:
         print "Something went wrong while storing or printing the chart information"
 
     
-
-
-nurse_option1()
-nurse_option1()
 nurse_option1()
