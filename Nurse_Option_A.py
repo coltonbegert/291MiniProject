@@ -104,7 +104,7 @@ def Nurse_Option_A(hcno = None):
             
 
     #selects the first unused chart number from 00001 to 99999
-    c.execute('SELECT chart_id FROM charts WHERE hcno=:hcno AND edate=:edate ORDER BY adate DESC', {'hcno':hcno, 'edate':'Null'})
+    c.execute('SELECT chart_id FROM charts WHERE hcno=:hcno AND edate is Null ORDER BY adate DESC', {'hcno':hcno})
     chart_id = str(c.fetchone()).strip("(u',)")
     
     if chart_id != str(None):
@@ -129,7 +129,7 @@ def Nurse_Option_A(hcno = None):
             break
     
     adate = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    insertion = [(chart_id, hcno, adate, 'Null')]
+    insertion = [(chart_id, hcno, adate, None)]
     try:
         c.executemany('INSERT INTO charts VALUES (?,?,?,?)', insertion)
         conn.commit()

@@ -7,11 +7,12 @@ def Login():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     login_success = False
-    print "\n\nWelcome."
     while login_success == False:
-        print "\nEnter 'newuser' to navigate to a user entry system,\nor enter your registered login."
+        print "\nEnter 'newuser' to navigate to a user entry system,\nEnter 'shutdown' to exit or enter your registered login."
         login = raw_input("\nPlease enter your login: ")
         
+        if login.lower() == 'shutdown':
+            return 0, 'S'
         if login.lower() == 'newuser':
             #user has to accept changes at the end or choose to start the process over
             accept = 'N'

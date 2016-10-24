@@ -23,7 +23,7 @@ def Nurse_Option_B():
         hcno = raw_input("Please enter the patient's health care number: ")
         c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno, ))
         result = c.fetchone()
-    c.execute('SELECT chart_id FROM charts WHERE hcno=:hcno AND edate=:edate ORDER BY adate DESC', {'hcno':hcno, 'edate':'Null'})
+    c.execute('SELECT chart_id FROM charts WHERE hcno=:hcno AND edate is Null ORDER BY adate DESC', {'hcno':hcno})
     chart_id = str(c.fetchone()).strip("(u',)")
 
     if chart_id == str(None):

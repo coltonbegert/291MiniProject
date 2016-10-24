@@ -9,7 +9,7 @@ def Nurse(sid=None):
         (2) Close a patient's chart\n\
         (3) Same as 1. for the doctors.\n\
         (4) Same as 2. for the doctors.\n\
-        (5) Logout\n\
+        (5) Logout user\n\
         \nSelection: ")
         if answer == '1': 
             Nurse_Option_A()
