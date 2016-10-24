@@ -1,46 +1,73 @@
 import sqlite3
 from time import gmtime, strftime
 
-def nurse_option1():
+def Nurse_Option_A():
+    #connect to the database
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()    
+    
+    #get the health care number
     hcno = raw_input("Please enter patient hcno: ")
+    
+    # if the health care number is shorter than 5 digits or isn't 5 numbers
     if len(hcno) != 5 or hcno.isdigit() is False:
         print "Health care number is a 5 digit number"
         hcno = raw_input("Please enter patient hcno: ")
+        
+    # figure out if the hcno is already in the database    
     c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno, ))
     result = c.fetchone()
+    
+    #if not then
     if result == None:
         print "Oops, patient not in database."
         name = raw_input("Please enter the patient's name: ")
+        
         while len(name) > 15 or name.replace(' ', '').isalpha() is False or len(name.replace(' ', '')) == 0:
-            if len(name) > 15: #name is too long
-                print "Name must be 15 characters or shorter."
-            if name.replace(' ', '').isalpha() is False and len(name.replace(' ', '')) != 0: #name contains numbers and is not blank
+            
+            #name is too long
+            if len(name) > 15: print "Name must be 15 characters or shorter."
+            
+            if name.replace(' ', '').isalpha() is False and len(name.replace(' ', '')) != 0:    #name contains numbers and is not blank
                 print "Name must not contain numbers"          #when I left the blank check out, it popped up when this was empty
-            if len(name.replace(' ', '')) == 0: #name contains entirely spaces
-                print "Name can't be blank"
+                
+            #name contains entirely spaces   
+            if len(name.replace(' ', '')) == 0:  print "Name can't be blank"
+            
             name = raw_input("Please enter the patient's name: ")
         
-        name = name.title()    
+        name = name.title() #capitalize first letter of each word and lowercase the rest
+        
+        #get age group
         print "Now we need the age group. To make it homogeneous with the others we have"
+        
+        #find all the current age groups in the database
         c.execute('''
-        SELECT DISTINCT age_group FROM patients ;
+        SELECT DISTINCT age_group FROM patients ORDER BY age_group ;
         ''')
         resultat = c.fetchall()
-        result = [str(x).strip("(u',)") for x in resultat]
-        result.append("Custom")
+        result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+        result.append("Custom") #add the option to add an age group to the database
+        
+        # generate the numbers in the (x) part of the output
         for i in range(1, len(result)+1):
             x = result[i-1]
             print "(" + str(i) + ")  " + str(x)
-        answer = raw_input("Enter your selection: ") #make sure you got a number in the list, and that it's a number
+            
+        
+        answer = raw_input("Enter your selection: ") #still to add: make sure you got a number in the list, and that it's a number
+        
+        #if they didn't choose custom
         age_group = result[int(answer)-1]
+        
+        #if they choose custom
         if answer == str(len(result)):
             exit = False
             while exit == False:
+                #gets the low and high range of the age group and then concatenates them
                 age_group_low = raw_input("Enter the lowest age in the group: ")
                 age_group_hi = raw_input("Enter the highest age in the group: ")
-                age_group = str(age_group_low).zfill(2) + '-' + str(age_group_hi).zfill(2)
+                age_group = str(age_group_low).zfill(2) + '-' + str(age_group_hi).zfill(2) #zfill(2) enter 3 and it becomes 03, 8 becomes 08 and 10 remains 10
                 test = raw_input("Add age group to db (y/n/exit)? : ")
                 if test.lower().replace(' ', '') == 'exit':
                     exit = True
@@ -111,6 +138,3 @@ def nurse_option1():
         print "----------------------------------------------------------"
     except:
         print "Something went wrong while storing or printing the chart information"
-
-    
-nurse_option1()
