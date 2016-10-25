@@ -62,7 +62,7 @@ def Login():
                 '''
                 NAME
                 '''
-                name = raw_input("Enter desired name: ").title() #title method capitalizes the first letter of each word and makes all others lowercase 'cOlToN bEGErT'.title() --> 'Colton Begert'
+                name = raw_input("\nEnter desired name: ").title() #title method capitalizes the first letter of each word and makes all others lowercase 'cOlToN bEGErT'.title() --> 'Colton Begert'
                 if name.lower() == 'exit':
                     return 0, 0                
 
@@ -91,7 +91,7 @@ def Login():
                 '''
                 PASSWORD
                 '''
-                password = sha224(raw_input("Enter desired password: ")).hexdigest()        # immediately encodes entered password
+                password = sha224(raw_input("\nEnter desired password: ")).hexdigest()        # immediately encodes entered password
                 accept = raw_input("Do you want to accept these changes (Y/N/exit)?: ")          # if Y, then user is inserted, if N then it starts the new user process again
                 if accept == exit:
                     return 0,0
@@ -99,6 +99,7 @@ def Login():
             insertion = [(staff_id, role, name, login, password)]
             c.executemany("INSERT INTO staff VALUES (?,?,?,?,?)",insertion)                 #inserts user
             conn.commit()                                                                   #commits change to database
+            print "\nSuccessfully added user"                                               # to be totally sure, this could perform a database search for the new user to ensure they've been added, probably unnecessary
             continue                                                                        #return to login segment
         
         en_pass = sha224(raw_input("Please enter your password: ")).hexdigest()             #encodes password
