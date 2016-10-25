@@ -57,7 +57,11 @@ def main(argv):
                 return 0
                 
         elif answer == '2':
-            sql_file_path = raw_input("Please enter the path of the sql document you would like to run: ")
+            sql_file_path = raw_input("\nPlease enter the path of the sql document you would like to run or type 'exit': ")
+            if sql_file_path.lower() == 'exit':
+                continue
+            
+            
             if sql_file_path is not '':
                 while sql_file_path.replace(' ', '')[0] != '.':
                     print "Format must be ./sql_document.sql"

@@ -8,9 +8,10 @@ def Login():
     c = conn.cursor()
     login_success = False
     while login_success == False:
-        print "\nEnter 'newuser' to navigate to a user entry system,\nEnter 'shutdown' to exit or enter your registered login."
+        print "\nEnter 'newuser' to navigate to a user entry system,\nEnter 'shutdown' to shutdown the system \nType 'exit' to exit or enter your registered login."
         login = raw_input("\nPlease enter your login: ")
-        
+        if login.lower() == 'exit':
+            return 0,0
         if login.lower() == 'shutdown':
             return 0, 'S'
         if login.lower() == 'newuser':
