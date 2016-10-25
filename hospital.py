@@ -62,9 +62,17 @@ def main(argv):
                 while sql_file_path.replace(' ', '')[0] != '.':
                     print "Format must be ./sql_document.sql"
                     sql_file_path = raw_input("Please enter the path of the sql document you would like to run: ")
-            ############################################
-            print "I didn't feel like finishing this yet"
-            ############################################
+                    
+                conn = sqlite3.connect('./hospital.db')
+                c = conn.cursor()                
+                try:
+                    with open(sql_file_path, 'r') as f:  #build the database structure
+                        lines = f.read()
+                    c.executescript(lines)
+                    conn.commit()
+                    print "Successfully ran file"
+                except:
+                    print "There was an error processing your request"
                 
         elif answer == '3':
             return 0
