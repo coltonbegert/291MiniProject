@@ -56,13 +56,13 @@ def Doctor_Option_C():
         
     if result == None:
         print ("Oops, patient not in database.")
-        return    
+
     
     # show all open charts for patient
-    
-    c.execute(''' Select * from charts where hcno = result''')
-    
-    chartid = raw_input("Enter the chartID you wish to look up")
+
+    c.execute(''' Select chart_id from charts where edate is NULL and hcno = ?''',(result,))
+    result = c.fetchall()
+
     
     # get diagnosis 
     
@@ -77,19 +77,53 @@ def Doctor_Option_C():
     
     # staff_id = staff_id
     
-    c.execute(''' INSERT into diagnoses values ( result, chart_id, staff_id, ddate, diagnosis); ''')
-    
+    c.execute(''' INSERT into diagnoses values ( result, chart_id, staff_id, ddate, diagnosis) ''')
+    conn.commit()
+
+
+
 
 def Doctor_Option_D():
+    conn = sqlite.connect("./hospital.db")
+    c = conn.cursor()
+
+    # get the health care number
+    hcno = raw_input("Enter patient's hcno: ")
+
+    if len(hcno) != 5 or hcno.isdigit() is False:
+        print ("Health care number is a 5 digit number")
+        hcno = raw_input("Please enter patient hcno: ")
+
+        # figure out if the hcno is already in the database
+    c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno,))
+    result = c.fetchone()
+
+
+    if result == None:
+        print ("Oops, patient not in database.")
+
+    # show all open charts for patient
+
+    c.execute(''' Select chart_id from charts where edate is NULL and hcno = ?''', (result,))
+    result = c.fetchall()
+
     
-    # same code
     
-    
-    #Additional Checks 
+    #Additional Checks
+
+
+    c.execute('Select amount from medications where hcno = hcno  ', {'hcno',result})
+
+    prescribedAmount = c.fetchall
+
+    c.execute(''' Select sug_amount from dosage where age_group = age;''')
+    recomendedAmount = c.fetchall
+
+
     
     if (prescribedAmount > recomendedAmount):
         print("WARNING")
-        c.execute(''' Select sug_amount from dosage where age_group = age;''')
+
     
     print("Would you like to Change perscription")
     change= raw_input("Enter Yes or NO") 
@@ -109,5 +143,16 @@ def Doctor_Option_D():
     c.execute(''' SELECT canbe_alg from inferredallergies where alg = drugName;''')
     
     print("Patient may be allegic to " + inferedAllergy + " inferred from" + drugName) 
-    
+
+
+    mdate = strftime("%A, %d %B %Y %H:%M:%S", gmtime())
+
+    # pass staff_id
+
+    start_med = raw_input("Enter start date")
+    end_med = raw_input("Enter end date")
+    amount = raw_input("Enter amount")
+    drug_name = raw_input("Enter drug_name")
+
+    c.execute(''' Insert Into medications (hcno, chart_id, staff_id, mdate, start_med, end_med, amount, drug_name ''')
     
