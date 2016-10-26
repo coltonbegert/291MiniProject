@@ -1,0 +1,56 @@
+
+Testing Strategy:
+
+1st: Testing SQL Statements- 
+For each option in the database we created a SQL statement and ran it through to SQL until desired results were acheived.
+
+2nd: Testing python- 
+For the each option we created a seperate python file that connected to the database and ran the sql statement through python. We were able run and debug each option till it gave the desired results.
+
+3nd: Testing python-
+Combined each option to our main python program. Where through our selected role we ran each option from our main program that called selected functions.
+
+
+
+bugs- Null vs None in python
+    - can't import Nurse from Nurse (have to import Nurse then run Nurse.Nurse)
+    - 
+
+
+
+
+
+
+
+
+Extra Decisions:
+
+added feature to run Sql Statements
+instead of classes we had function that open the database and run the its designated query against it.
+
+
+
+
+Group work Break-Down
+
+Michael - Login/ Database, Nurse
+progress:
+
+Colton - System Admin
+progress:
+
+Justin - Doctor
+progress:
+
+
+coordination :
+
+Had several group sessions to on different parts of the project:
+Understand Design of Login
+Discuss Design Document
+Combine All Elements into final project
+
+
+
+
+
