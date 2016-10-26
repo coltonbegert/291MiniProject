@@ -13,6 +13,7 @@ def Nurse(sid=None):
         \nSelection: ")
         if answer == '1': 
             Nurse_Option_A()
+            #Create_Chart_Add_Patient()
         
         if answer == '2': 
             Nurse_Option_B()
