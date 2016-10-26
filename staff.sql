@@ -5,13 +5,13 @@ create view report(name, drug_name,
 
 select name, total(amount), drug_name, mdate
 from medications, staff
-where m. hcno = s.staff_id
+where m. hcno = s.staff_id and datetime(mdate) between datetime('')
 group by drug_name, mdate;
 
 
 select total(amount), drug_name
 from medications, drugs
-where d.drug_name = m.drug_name
+where d.drug_name = m.drug_name and datetime(mdate) between datetime('')
 group by category, mdate;
 
 select drug_name
