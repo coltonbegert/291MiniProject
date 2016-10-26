@@ -2,8 +2,8 @@ import sqlite3
 import sys
 from hashlib import sha224
 from Build_Database import Build_Database
-from Login import Login
 from Nurse import Nurse
+from utilities import parse_file, Login_system, greeting
 
 
 #from Admin import Admin
@@ -33,51 +33,17 @@ def main(argv):
     print "\n\nWelcome."
 
     while 0 == 0:
-        prompt = "\nWhat would you like to do?\
-        \n(1) Login\
-        \n(2) Add data\
-        \n(3) Shutdown\n: "
-        answer = raw_input( prompt )
-        if answer not in ['1', '2', '3']:
-            answer = raw_input( prompt)            
-            
+        answer = greeting()
+        
         if answer == '1':
-            staff_id, role = Login()
-            if role == 'A':
-                pass
-                #Admin(staff_id)
-                
-            # Needs to be implemented as 'A' --> Admin(staff_ID) and ('D', 'N') ---> Care_Staff(role, staff_ID) as per the requirements
-            elif role == 'D':
-                pass
-                #Doctor(staff_id)
-            elif role == 'N':
-                Nurse(staff_id)
-            elif role == 'S':
-                return 0
+            x = Login_system() #x will return as 'S' if the user wants to shut down the system
+            if x is not None:
+                if x == 'Shutdown':
+                    return 0
                 
         elif answer == '2':
-            sql_file_path = raw_input("\nPlease enter the path of the sql document you would like to run or type 'exit': ")
-            if sql_file_path.lower() == 'exit':
-                continue
-            
-            
-            if sql_file_path is not '':
-                while sql_file_path.replace(' ', '')[0] != '.':
-                    print "Format must be ./sql_document.sql"
-                    sql_file_path = raw_input("Please enter the path of the sql document you would like to run: ")
-                    
-                conn = sqlite3.connect('./hospital.db')
-                c = conn.cursor()                
-                try:
-                    with open(sql_file_path, 'r') as f:  #build the database structure
-                        lines = f.read()
-                    c.executescript(lines)
-                    conn.commit()
-                    print "Successfully ran file"
-                except:
-                    print "There was an error processing your request"
-                
+            parse_file()
+                  
         elif answer == '3':
             return 0
             
