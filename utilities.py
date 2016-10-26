@@ -155,8 +155,14 @@ def parse_file():
         try:
             with open(sql_file_path, 'r') as f:  #build the database structure
                 lines = f.read()
-            c.executescript(lines)
+            c.executemany(lines)
+            # c.execute(lines.replace("'\n'", ''))
             conn.commit()
+            result = c.fetchall()
+            for row in result:
+                print "hcno: ", row[0]
+
+
             print "Successfully ran file"
         except:
             print "There was an error processing your request"
