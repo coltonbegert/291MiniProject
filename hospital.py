@@ -1,7 +1,7 @@
 import sqlite3
 import sys
 from hashlib import sha224
-from Build_Database import Build_Database
+from Build_database import Build_Database
 from Nurse import Nurse
 from utilities import parse_file, Login_system, greeting
 
@@ -34,22 +34,21 @@ def main(argv):
 
     while 0 == 0:
         answer = greeting()
-        
+
         if answer == '1':
             x = Login_system() #x will return as 'S' if the user wants to shut down the system
             if x is not None:
                 if x == 'Shutdown':
                     return 0
-                
+
         elif answer == '2':
             parse_file()
-                  
+
         elif answer == '3':
             return 0
-            
-      
+
+
 if __name__ == '__main__':
     main(sys.argv)
     print "Shutting down the system"
     print "\nGoodbye."
-    
