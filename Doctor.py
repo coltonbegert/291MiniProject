@@ -52,55 +52,42 @@ def Doctor_Option_B(staff_id):
         return 'fatal'
     else:
         chart_id = str(result).strip("(,)u'")
-    
     symptom = utilities.get_symptom()
     obs_date = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
     insertion = [(hcno, chart_id, staff_id, obs_date, symptom)]
     print insertion
     try:
-        c.executemany(''' INSERT into diagnoses VALUES (?,?,?,?,?)''', insertion)
+        c.executemany(''' INSERT into symptoms VALUES (?,?,?,?,?)''', insertion)
         conn.commit()
         print "Entry added"
-        print "It says it added it, but this function is being a bitch and may not have! If you can find the error that would be great"
     except:
         print "There was an error processing your request"
 
 
 
 
-def Doctor_Option_C():
-    conn = sqlite.connect("./hospital.db")
+def Doctor_Option_C(staff_id):
+    conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     hcno = utilities.get_hcno()
+    c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
+    result = c.fetchone()
+    print result
     if result == None:
-        print ("Oops, patient not in database.")
+        print "No open chart for given Health Care Number"
         return 'fatal'
-    
-
-    
-    # show all open charts for patient
-
-    c.execute(''' Select chart_id from charts where edate is NULL and hcno = ?''',(result,))
-    result = c.fetchall()
-
-    
-    # get diagnosis 
-    
-    diagnosis = raw_input("Please enter the diagnosis")
-    while len(diagnosis) > 20:
-        print ("diagnosis must be shorted than 21 characters")
-        diagnosis = raw_input ("Please enter their address:")
-    
-    # get date
-       
-    ddate = strftime("%A, %d %B %Y %H:%M:%S", gmtime())
-    
-    # staff_id = staff_id
-    
-    c.execute(''' INSERT into diagnoses values ( result, chart_id, staff_id, ddate, diagnosis) ''')
-    conn.commit()
-
-
+    else:
+        chart_id = str(result).strip("(,)u'")
+    diagnosis = utilities.get_diagnosis()
+    ddate = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
+    insertion = [(hcno, chart_id, staff_id, ddate, diagnosis)]
+    print insertion
+    try:
+        c.executemany(''' INSERT into diagnoses VALUES (?,?,?,?,?)''', insertion)
+        conn.commit()
+        print "Entry added"
+    except:
+        print "There was an error processing your request"
 
 
 def Doctor_Option_D():

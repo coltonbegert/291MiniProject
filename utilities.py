@@ -50,6 +50,36 @@ def get_symptom():
             symptom = raw_input("Please enter the observed symptom: ")
     return symptom 
 
+def get_diagnosis():
+    conn = sqlite3.connect("./hospital.db")
+    c = conn.cursor()
+    print "Now we need the diagnosis. For ease, you may enter one from this list or enter your own:"
+    c.execute('''SELECT DISTINCT diagnosis FROM diagnoses;''')
+    resultat = c.fetchall()
+    result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+    result.append("Custom") #add the option to add a custom symptom to the database
+
+    # generate the numbers in the (x) part of the output
+    for i in range(1, len(result)+1):
+        x = result[i-1]
+        print "(" + str(i) + ")  " + str(x)  
+    
+    answer = raw_input("Please enter your selection: ")
+    while answer not in [str(i) for i in range(1, len(result)+1)]:
+        print "Please enter an option from the list"
+        answer = raw_input("Please enter your selection:")
+    
+    #map their answer to the entries in result
+    diagnosis = result[int(answer)-1]
+    
+    #if they choose custom
+    if answer == str(len(result)):
+        #gets the low and high range of the age group and then concatenates them
+        diagnosis = raw_input("Please diagnose the patient: ")
+        while len(symptom) > 20:
+            print "Diagnosis must be shorter than 21 characters"
+            diagnosis = raw_input("Please diagnose the patient: ")
+    return diagnosis 
 
 def get_hcno():
     '''
@@ -103,7 +133,7 @@ def get_age_group():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     #get age group
-    print "Now we need the age group. To make it homogeneous with the others we have"
+    print "Now we need the age group. To make it homogeneous with the others we have:"
 
     #find all the current age groups in the database
     c.execute('''
@@ -111,7 +141,6 @@ def get_age_group():
     ''')
     resultat = c.fetchall()
     result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
-    result.append("Custom") #add the option to add an age group to the database
 
     # generate the numbers in the (x) part of the output
     for i in range(1, len(result)+1):
@@ -123,22 +152,7 @@ def get_age_group():
         print "Please enter an option from the list"
         answer = raw_input("Enter your selection: ")
 
-    #if they didn't choose custom
     age_group = result[int(answer)-1]
-
-    #if they choose custom
-    if answer == str(len(result)):
-        exit = False
-        while exit == False:
-            #gets the low and high range of the age group and then concatenates them
-            age_group_low = raw_input("Enter the lowest age in the group: ")
-            age_group_hi = raw_input("Enter the highest age in the group: ")
-            age_group = str(age_group_low).zfill(2) + '-' + str(age_group_hi).zfill(2) #zfill(2) enter 3 and it becomes 03, 8 becomes 08 and 10 remains 10
-            test = raw_input("Add age group to db (y/n/exit)? : ")
-            if test.lower().replace(' ', '') == 'exit':
-                exit = True
-            elif test.lower().replace(' ','') == 'y':
-                exit = True
     return age_group
 
 def get_address():
