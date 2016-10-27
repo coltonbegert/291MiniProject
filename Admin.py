@@ -1,10 +1,10 @@
 import sqlite3
 
 def Admin():
-    print "1) Create Report\n2) prescribed\n3) medication recommendation\n4) Drug uses\n"
+    print "1) Create Report\n2) prescribed\n3) medication recommendation\n4) Search for drug applications\n"
     needInput = True
     while needInput:
-        option = raw_input("Choose and option: ")
+        option = raw_input("Choose an option: ")
         if option <='4' or option >'0':
             needInput = False
         elif option == "exit":
@@ -14,7 +14,7 @@ def Admin():
             print "incorrect option. Try again or type 'exit' to exit"
             continue
 
-        print type(option)
+        # print type(option)
         if option == '1':
             create_report()
         elif option == '2':
@@ -22,7 +22,7 @@ def Admin():
         elif option == '3':
             med_recommend()
         elif option == '4':
-            drugUses()
+            drug_uses()
 
 def connect_db(db_name = "./hospital.db"):
     conn = sqlite3.connect(db_name)
@@ -116,5 +116,35 @@ def med_recommend():
         print row[0]
     disconnect_db(conn)
 
+def drug_uses():
+    conn,c = connect_db()
+
+    drug = raw_input("Enter a Drug: ")
+
+    # http://stackoverflow.com/questions/4517681/sql-sum-with-condition
+    # drug = 'ZMapp'
+
+    c.execute('''SELECT d.diagnosis || (select  cast(((SUM(CASE WHEN m1.drug_name = m.drug_name THEN 1 ELSE 0 END)+0.0)/(count(*)+0.0)) as float)
+      FROM medications m1, diagnoses d1
+      WHERE m1.chart_id = d1.chart_id
+      AND m1.hcno = d1.hcno
+      AND d1.diagnosis = d.diagnosis)
+        FROM charts c, diagnoses d,medications m
+        WHERE c.chart_id = d.chart_id
+        AND m.chart_id = c.chart_id
+        AND m.drug_name = ? COLLATE NOCASE
+        AND m.mdate > d.ddate
+        GROUP BY d.diagnosis
+        ORDER BY (select  cast((SUM(CASE WHEN m1.drug_name = m.drug_name THEN 1 ELSE 0 END)/count(*)) as float)
+          FROM medications m1, diagnoses d1
+          WHERE m1.chart_id = d1.chart_id
+          AND m1.hcno = d1.hcno
+          AND d1.diagnosis = d.diagnosis) DESC;
+
+    ''', ([drug]))
+
+    result = c.fetchall()
+    for row in result:
+        print row[0]
 
 Admin()

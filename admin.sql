@@ -20,11 +20,15 @@
 -- ORDER BY d.category;
 
 
-SELECT m.drug_name
+SELECT d.diagnosis
 FROM charts c, diagnoses d,medications m
 WHERE c.chart_id = d.chart_id
 AND m.chart_id = c.chart_id
-AND d.diagnosis = 'Ebola'
+AND m.drug_name = 'Retrovir'
 AND m.mdate > d.ddate
-GROUP BY m.drug_name
-ORDER BY count(*) DESC;
+GROUP BY d.diagnosis
+ORDER BY (select  (SUM(CASE WHEN m1.drug_name = m.drug_name THEN 1 ELSE 0 END)/count(*))
+  FROM medications m1, diagnoses d1
+  WHERE m1.chart_id = d1.chart_id
+  AND m1.hcno = d1.hcno
+  AND d1.diagnosis = d.diagnosis) DESC;
