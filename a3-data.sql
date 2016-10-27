@@ -1,6 +1,6 @@
 /*
 passwords are as follows, encrypted using sha224
-name	username	password (case sensitive)	
+name	username	password (case sensitive)
 
 Phil 	PugLove8 	dragon
 Mehmet	OzDaddy		ILoveFakeMedicine
@@ -135,6 +135,7 @@ INSERT INTO diagnoses VALUES
 
 INSERT INTO medications VALUES
 ("15384", '10001', '14334', "2015-01-12 02:20:09", "2015-01-12 19:50:32", "2015-02-21 02:51:33", "8", "ZMapp"),
+
 ("15384", '10034', '14479', "2015-04-18 06:35:43", "2015-04-20 10:04:18", "2015-05-20 07:53:43", "75", "Retrovir"),
 ("15384", '10056', '14479', "2016-05-19 05:47:13", "2016-05-20 07:44:21", "2016-07-10 18:26:06", "300", "Alkeran"),
 

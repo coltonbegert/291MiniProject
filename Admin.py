@@ -20,11 +20,11 @@ def Admin():
         elif option == '2':
             prescribed_drugs()
         elif option == '3':
-            medRecommend()
+            med_recommend()
         elif option == '4':
             drugUses()
 
-def connect_db(db_name):
+def connect_db(db_name = "./hospital.db"):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
     return conn, c
@@ -40,7 +40,7 @@ def create_report():
     end_date = raw_input("Enter end of time period (YYYY-MM-DD): ")
     # start_date = '2000-01-01'
     # end_date = 'now'
-    conn, c = connect_db("./hospital.db")
+    conn, c = connect_db()
 
     c.execute('''SELECT s.name, m.drug_name, sum(m.amount* (cast(julianday(m.end_med) as int) - cast(julianday(m.start_med) as int)))
         FROM staff s, medications m
@@ -64,7 +64,7 @@ def create_report():
     disconnect_db(conn)
 
 def prescribed_drugs():
-    conn,c = connect_db("./hospital.db")
+    conn,c = connect_db()
 
     start_date = raw_input("Enter start of time period (YYYY-MM-DD): ")
     end_date = raw_input("Enter end of time period (YYYY-MM-DD): ")
@@ -95,5 +95,26 @@ def prescribed_drugs():
 
 
     disconnect_db(conn)
+
+def med_recommend():
+    conn,c = connect_db()
+
+    diagnoses = raw_input("Enter a diagnoses: ")
+
+    c.execute('''SELECT m.drug_name
+        FROM charts c, diagnoses d,medications m
+        WHERE c.chart_id = d.chart_id
+        AND m.chart_id = c.chart_id
+        AND d.diagnosis = ? COLLATE NOCASE
+        AND m.mdate > d.ddate
+        GROUP BY m.drug_name
+        ORDER BY count(*) DESC;''', ([diagnoses])
+    )
+
+    result = c.fetchall()
+    for row in result:
+        print row[0]
+    disconnect_db(conn)
+
 
 Admin()
