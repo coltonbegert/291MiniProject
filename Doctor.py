@@ -1,5 +1,6 @@
 import sqlite3
 from time import gmtime, strftime
+import utilities
 
 #       Rough Draft
 #       Needs Work
@@ -21,8 +22,8 @@ def Doctor_Option_A():
             hcno = raw_input("Please enter patient hcno: ")    
 
     # figure out if the hcno is already in the database    
-        c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno, ))
-        result = c.fetchone()
+    c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno, ))
+    result = c.fetchone()
         
     if result == None:
         print ("Oops, patient not in database.")
@@ -38,24 +39,43 @@ def Doctor_Option_A():
     # gather all entries from selected chart 
     
     c.execute(''' Select * FROM symptoms order by obs_date group by hcno UNION select * From diagnoses order by ddate group by hcno UNION select * from medications order by ddate group by hcno;''')
+
+def Doctor_Option_B(staff_id):
+    conn = sqlite3.connect("./hospital.db")
+    c = conn.cursor()
+    hcno = utilities.get_hcno()
+    c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
+    result = c.fetchone()
+    print result
+    if result == None:
+        print "No open chart for given Health Care Number"
+        return 'fatal'
+    else:
+        chart_id = str(result).strip("(,)u'")
     
+    symptom = utilities.get_symptom()
+    obs_date = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
+    insertion = [(hcno, chart_id, staff_id, obs_date, symptom)]
+    print insertion
+    try:
+        c.executemany(''' INSERT into diagnoses VALUES (?,?,?,?,?)''', insertion)
+        conn.commit()
+        print "Entry added"
+        print "It says it added it, but this function is being a bitch and may not have! If you can find the error that would be great"
+    except:
+        print "There was an error processing your request"
+
+
+
+
 def Doctor_Option_C():
     conn = sqlite.connect("./hospital.db")
     c = conn.cursor()
-    
-    #get the health care number
-    hcno = raw_input("Enter patient's hcno: ")
-    
-    if len(hcno) != 5 or hcno.isdigit() is False:
-            print ("Health care number is a 5 digit number")
-            hcno = raw_input("Please enter patient hcno: ")    
-
-    # figure out if the hcno is already in the database    
-        c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno, ))
-        result = c.fetchone()
-        
+    hcno = utilities.get_hcno()
     if result == None:
         print ("Oops, patient not in database.")
+        return 'fatal'
+    
 
     
     # show all open charts for patient

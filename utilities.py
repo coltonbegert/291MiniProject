@@ -19,6 +19,37 @@ def access_hcno():
         hcno = raw_input("Please enter patient hcno: ")
     return hcno
 
+def get_symptom():
+    conn = sqlite3.connect("./hospital.db")
+    c = conn.cursor()
+    print "Now we need the symptom. For ease, you may enter one from this list or enter your own:"
+    c.execute('''SELECT DISTINCT symptom FROM symptoms;''')
+    resultat = c.fetchall()
+    result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+    result.append("Custom") #add the option to add a custom symptom to the database
+
+    # generate the numbers in the (x) part of the output
+    for i in range(1, len(result)+1):
+        x = result[i-1]
+        print "(" + str(i) + ")  " + str(x)  
+    
+    answer = raw_input("Please enter your selection: ")
+    while answer not in [str(i) for i in range(1, len(result)+1)]:
+        print "Please enter an option from the list"
+        answer = raw_input("Please enter your selection:")
+    
+    #map their answer to the entries in result
+    symptom = result[int(answer)-1]
+    
+    #if they choose custom
+    if answer == str(len(result)):
+        #gets the low and high range of the age group and then concatenates them
+        symptom = raw_input("Please enter the observed symptom: ")
+        while len(symptom) > 15:
+            print "Symptom must be shorter than 16 characters"
+            symptom = raw_input("Please enter the observed symptom: ")
+    return symptom 
+
 
 def get_hcno():
     '''
