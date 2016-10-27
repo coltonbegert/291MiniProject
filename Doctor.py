@@ -97,7 +97,7 @@ def Doctor_Option_D(staff_id):
     c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
     result = c.fetchone()
     if result == None:
-        print "No open chart for given Health Care Number"
+        print "\nNo open chart for given Health Care Number"
         return 'fatal'
     else:
         chart_id = str(result).strip("(,)u'") 
@@ -107,7 +107,7 @@ def Doctor_Option_D(staff_id):
     
     start_med_date = utilities.get_s_med_date(mdate)
     end_med_date = utilities.get_e_med_date()
-    amount = raw_input("Please enter the amount of medication you wish to prescribe: ")
+    amount = raw_input("\nPlease enter the amount of medication you wish to prescribe: ")
     
     #lookup suggested dose of specific medication for age range of the patient
     c.execute('''select sug_amount from dosage d, patients p where p.hcno=:hcno AND d.age_group = p.age_group AND drug_name=:med''', {'med':medication, 'hcno':hcno})
@@ -117,7 +117,7 @@ def Doctor_Option_D(staff_id):
     age_group = str(c.fetchone()).strip("(,)u'")
     
     while int(amount) > int(sug_amount):
-        print "Warning, this patient is in the age group", age_group, "and the suggested dose of", medication, "for that age group is", sug_amount
+        print "\nWarning, this patient is in the age group", age_group, "and the suggested dose of", medication, "for that age group is", sug_amount
         answer = raw_input("Do you wish to continue(y/n): ")
         if answer.lower() == 'y':
             break
@@ -125,7 +125,7 @@ def Doctor_Option_D(staff_id):
             amount = raw_input("Please enter the amount of medication you wish to prescribe: ")
         
             
-    print "not completely implemented"
+    print "\nnot completely implemented"
     return 0
         
     
