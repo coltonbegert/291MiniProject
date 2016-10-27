@@ -72,7 +72,6 @@ def Doctor_Option_C(staff_id):
     hcno = utilities.get_hcno()
     c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
     result = c.fetchone()
-    print result
     if result == None:
         print "No open chart for given Health Care Number"
         return 'fatal'
@@ -90,30 +89,63 @@ def Doctor_Option_C(staff_id):
         print "There was an error processing your request"
 
 
-def Doctor_Option_D():
-    conn = sqlite.connect("./hospital.db")
+def Doctor_Option_D(staff_id):
+    conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
-
     # get the health care number
-    hcno = raw_input("Enter patient's hcno: ")
-
-    if len(hcno) != 5 or hcno.isdigit() is False:
-        print ("Health care number is a 5 digit number")
-        hcno = raw_input("Please enter patient hcno: ")
-
-        # figure out if the hcno is already in the database
-    c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno,))
+    hcno = utilities.get_hcno()    
+    c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
     result = c.fetchone()
-
-
     if result == None:
-        print ("Oops, patient not in database.")
-
-    # show all open charts for patient
-
-    c.execute(''' Select chart_id from charts where edate is NULL and hcno = ?''', (result,))
-    result = c.fetchall()
-
+        print "No open chart for given Health Care Number"
+        return 'fatal'
+    else:
+        chart_id = str(result).strip("(,)u'") 
+    
+    medication = utilities.get_medication()
+    mdate = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
+    
+    start_med_date = utilities.get_s_med_date(mdate)
+    end_med_date = utilities.get_e_med_date()
+    amount = raw_input("Please enter the amount of medication you wish to prescribe: ")
+    
+    #lookup suggested dose of specific medication for age range of the patient
+    c.execute('''select sug_amount from dosage d, patients p where p.hcno=:hcno AND d.age_group = p.age_group AND drug_name=:med''', {'med':medication, 'hcno':hcno})
+    sug_amount = str(c.fetchone()).strip("(,)u'")
+    
+    c.execute('''SELECT age_group from patients where hcno=?''', (hcno,))
+    age_group = str(c.fetchone()).strip("(,)u'")
+    
+    while int(amount) > int(sug_amount):
+        print "Warning, this patient is in the age group", age_group, "and the suggested dose of", medication, "for that age group is", sug_amount
+        answer = raw_input("Do you wish to continue(y/n): ")
+        if answer.lower() == 'y':
+            break
+        else:
+            amount = raw_input("Please enter the amount of medication you wish to prescribe: ")
+        
+            
+    print "not completely implemented"
+    return 0
+        
+    
+    
+    
+    
+    
+        
+        
+        
+        
+        
+    insertion = [(hcno, chart_id, staff_id, mdate, medication)]
+    print insertion
+    try:
+        c.executemany(''' INSERT into diagnoses VALUES (?,?,?,?,?)''', insertion)
+        conn.commit()
+        print "Entry added"
+    except:
+        print "There was an error processing your request"    
     
     
     #Additional Checks

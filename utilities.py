@@ -18,7 +18,7 @@ def access_hcno():
         print "Health care number is a 5 digit number"
         hcno = raw_input("Please enter patient hcno: ")
     return hcno
-
+    
 def get_symptom():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
@@ -43,7 +43,6 @@ def get_symptom():
     
     #if they choose custom
     if answer == str(len(result)):
-        #gets the low and high range of the age group and then concatenates them
         symptom = raw_input("Please enter the observed symptom: ")
         while len(symptom) > 15:
             print "Symptom must be shorter than 16 characters"
@@ -57,7 +56,7 @@ def get_diagnosis():
     c.execute('''SELECT DISTINCT diagnosis FROM diagnoses;''')
     resultat = c.fetchall()
     result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
-    result.append("Custom") #add the option to add a custom symptom to the database
+    result.append("Custom") #add the option to add a custom diagnosis to the database
 
     # generate the numbers in the (x) part of the output
     for i in range(1, len(result)+1):
@@ -74,12 +73,58 @@ def get_diagnosis():
     
     #if they choose custom
     if answer == str(len(result)):
-        #gets the low and high range of the age group and then concatenates them
         diagnosis = raw_input("Please diagnose the patient: ")
         while len(symptom) > 20:
             print "Diagnosis must be shorter than 21 characters"
             diagnosis = raw_input("Please diagnose the patient: ")
-    return diagnosis 
+    return diagnosis
+
+def get_s_med_date(mdate):
+    start_med = raw_input("Enter start date of medication in the following format: YYYY-MM-DD HH:MM:SS, \nor enter S if start date is same as prescription date: ")
+    sm = start_med.lstrip(' ')
+    while sm.upper() != 'S' and (len(sm) < 17 or sm[4] != '-' or sm[7] != sm[4] or sm[13] != sm[16] or sm[13] != ':'):
+        start_med = raw_input("Please enter start date of medication in the following format: YYYY-MM-DD HH:MM:SS, \nor enter S if start date is same as prescription date: ")
+        sm = start_med.lstrip(' ')
+    if sm.upper() == 'S':
+        start_med = mdate
+    return start_med
+
+def get_e_med_date():
+    end_med = raw_input("Please enter end date of medication in the following format: YYYY-MM-DD HH:MM:SS: ")
+    em = end_med.lstrip(' ')
+    while em[4] != '-' or em[7] != em[4] or em[13] != em[16] or em[13] != ':':
+        end_med = raw_input("Please enter end date of medication in the following format: YYYY-MM-DD HH:MM:SS: ")
+        em = end_med.lstrip(' ')
+    return end_med
+    
+def get_medication():
+    '''
+    get the medication the doctor chooses to prescribe
+    '''
+    conn = sqlite3.connect("./hospital.db")
+    c = conn.cursor()
+    #get medication
+    print "Now we need the medication. Choose from following list:"
+
+    #find all the current medications in the database
+    c.execute('''SELECT DISTINCT drug_name FROM medications''')
+
+    resultat = c.fetchall()
+    result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+
+    # generate the numbers in the (x) part of the output
+    for i in range(1, len(result)+1):
+        x = result[i-1]
+        print "(" + str(i) + ")  " + str(x)
+
+    answer = raw_input("Enter your selection: ")
+    while answer not in [str(i) for i in range(1, len(result)+1)]:
+        print "Please enter an option from the list"
+        answer = raw_input("Enter your selection: ")
+
+    medication = result[int(answer)-1]
+    return medication    
+
 
 def get_hcno():
     '''
@@ -147,7 +192,7 @@ def get_age_group():
         x = result[i-1]
         print "(" + str(i) + ")  " + str(x)
 
-    answer = raw_input("Enter your selection: ") #still to add: make sure you got a number in the list, and that it's a number
+    answer = raw_input("Enter your selection: ")
     while answer not in [str(i) for i in range(1, len(result)+1)]:
         print "Please enter an option from the list"
         answer = raw_input("Enter your selection: ")
