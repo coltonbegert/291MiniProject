@@ -2,15 +2,11 @@ import sqlite3
 from time import gmtime, strftime
 import utilities
 
-#       Rough Draft
-#       Needs Work
-#     
-#
-#
 
 
 
-def Doctor_Option_A():
+#not yet implemented
+def Display_Charts():
     conn = sqlite.connect("./hospital.db")
     c = conn.cursor()
     
@@ -40,18 +36,17 @@ def Doctor_Option_A():
     
     c.execute(''' Select * FROM symptoms order by obs_date group by hcno UNION select * From diagnoses order by ddate group by hcno UNION select * from medications order by ddate group by hcno;''')
 
-def Doctor_Option_B(staff_id):
+def Record_Symptom(staff_id):
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     hcno = utilities.get_hcno()
     c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
     result = c.fetchone()
-    print result
     if result == None:
         print "No open chart for given Health Care Number"
         return 'fatal'
     else:
-        chart_id = str(result).strip("(,)u'")
+        chart_id = str(result).lstrip("(u'").rstrip("',)")
     symptom = utilities.get_symptom()
     obs_date = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
     insertion = [(hcno, chart_id, staff_id, obs_date, symptom)]
@@ -66,7 +61,7 @@ def Doctor_Option_B(staff_id):
 
 
 
-def Doctor_Option_C(staff_id):
+def Add_Diagnosis(staff_id):
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     hcno = utilities.get_hcno()
@@ -76,7 +71,7 @@ def Doctor_Option_C(staff_id):
         print "No open chart for given Health Care Number"
         return 'fatal'
     else:
-        chart_id = str(result).strip("(,)u'")
+        chart_id = str(result).lstrip("(u'").rstrip("',)")
     diagnosis = utilities.get_diagnosis()
     ddate = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
     insertion = [(hcno, chart_id, staff_id, ddate, diagnosis)]
@@ -89,9 +84,10 @@ def Doctor_Option_C(staff_id):
         print "There was an error processing your request"
 
 
-def Doctor_Option_D(staff_id):
+def Add_Medication(staff_id):
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
+    
     # get the health care number
     hcno = utilities.get_hcno()    
     c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
@@ -100,7 +96,12 @@ def Doctor_Option_D(staff_id):
         print "\nNo open chart for given Health Care Number"
         return 'fatal'
     else:
-        chart_id = str(result).strip("(,)u'") 
+        chart_id = str(result).lstrip("(u'").rstrip("',)") 
+        
+    c.execute(''' select name from patients where hcno=? ''', (hcno,))
+    name = str(c.fetchone()).lstrip("(u'").rstrip("',)") 
+        
+    print "Fetched open chart with chart ID", chart_id, "\nPatient name:", name
     
     medication = utilities.get_medication()
     mdate = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
@@ -111,18 +112,23 @@ def Doctor_Option_D(staff_id):
     
     #lookup suggested dose of specific medication for age range of the patient
     c.execute('''select sug_amount from dosage d, patients p where p.hcno=:hcno AND d.age_group = p.age_group AND drug_name=:med''', {'med':medication, 'hcno':hcno})
-    sug_amount = str(c.fetchone()).strip("(,)u'")
+    sug_amount = str(c.fetchone()).lstrip("(u'").rstrip("',)")
     
+    #and get their age group
     c.execute('''SELECT age_group from patients where hcno=?''', (hcno,))
-    age_group = str(c.fetchone()).strip("(,)u'")
+    age_group = str(c.fetchone()).lstrip("(u'").rstrip("',)")
     
     while int(amount) > int(sug_amount):
-        print "\nWarning, this patient is in the age group", age_group, "and the suggested dose of", medication, "for that age group is", sug_amount
-        answer = raw_input("Do you wish to continue(y/n): ")
+        print "\nWarning, this patient is in the age group", age_group, "and the suggested dose of", medication, "for that age group is", sug_amount + '.'
+        answer = raw_input("Do you wish to continue(y/n/exit): ")
+        if answer.lower() == 'exit':
+            return 'early end'
         if answer.lower() == 'y':
             break
         else:
-            amount = raw_input("Please enter the amount of medication you wish to prescribe: ")
+            amount = raw_input("Please enter the amount of medication you wish to prescribe or type exit: ")
+            if amount.lower() == 'exit':
+                return 'early end'
         
             
     print "\nnot completely implemented"

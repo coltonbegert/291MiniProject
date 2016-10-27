@@ -25,7 +25,7 @@ def get_symptom():
     print "Now we need the symptom. For ease, you may enter one from this list or enter your own:"
     c.execute('''SELECT DISTINCT symptom FROM symptoms;''')
     resultat = c.fetchall()
-    result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+    result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
     result.append("Custom") #add the option to add a custom symptom to the database
 
     # generate the numbers in the (x) part of the output
@@ -55,7 +55,7 @@ def get_diagnosis():
     print "Now we need the diagnosis. For ease, you may enter one from this list or enter your own:"
     c.execute('''SELECT DISTINCT diagnosis FROM diagnoses;''')
     resultat = c.fetchall()
-    result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+    result = [x.lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
     result.append("Custom") #add the option to add a custom diagnosis to the database
 
     # generate the numbers in the (x) part of the output
@@ -110,7 +110,7 @@ def get_medication():
     c.execute('''SELECT DISTINCT drug_name FROM medications''')
 
     resultat = c.fetchall()
-    result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+    result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
 
     # generate the numbers in the (x) part of the output
     for i in range(1, len(result)+1):
@@ -185,7 +185,7 @@ def get_age_group():
     SELECT DISTINCT age_group FROM patients ORDER BY age_group ;
     ''')
     resultat = c.fetchall()
-    result = [str(x).strip("(u',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+    result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
 
     # generate the numbers in the (x) part of the output
     for i in range(1, len(result)+1):
