@@ -5,7 +5,6 @@ import Nurse
 
 def Doctor(sid, role):
     while 0==0:
-        print"option 2, 3, 4 and 5 work for now"
         answer = raw_input("What option would you like to choose?\n\
         (1) Display Chart information for a patient\n\
         (2) Record a symptom\n\
@@ -46,22 +45,44 @@ def Display_Charts():
     name = str(c.fetchone()).lstrip("(u'").rstrip("',)")
     print "Here are all the charts for", name +':'
     
-    c.execute(''' Select chart_id From charts where hcno = ? order by adate;''',(hcno,))
+    c.execute(''' select chart_id, adate from (Select chart_id || ' is closed' as chart_id , adate as adate From charts where hcno = ? and edate is not Null UNION Select chart_id || 'is open' as chart_id, adate as adate From charts where hcno = ? and edate is Null) order by adate asc;''',(hcno,hcno))
     charts = c.fetchall()
+       
     
     for row in charts:
         print row[0]
-    
-    chart_id = '10001'
+               
+   
+   
     
     
     answer = raw_input ("Would you like to select a chart: ")
-    #if (answer == 'Y' or answer == 'yes'):
-        #c.execute(''' Select * From symptoms where chart_id = ?   UNION Select * from diagnoses where chart_id = ? UNION Select * From medications where chart_id = ?   order by ddate;''', (chart_id,chart_id,chart_id ))
+    if (answer == 'Y' or answer == 'yes'):
+        chart_id = raw_input("Which Chart would you to look at: ")
+        
+        c.execute(''' SELECT type, cdate, value
+FROM (
+  SELECT 'Symptom' as type, s.obs_date as cdate, s.symptom as value
+  FROM charts c, symptoms s
+  WHERE c.chart_id = s.chart_id
+  AND c.chart_id = ?
+  UNION
+  SELECT 'Diagnosis' as type, d.ddate as cdate, d.diagnosis as value
+  FROM charts c, diagnoses d
+  WHERE c.chart_id = d.chart_id
+  AND c.chart_id = ?
+  UNION
+  SELECT 'Medication' as type, m.mdate as cdate, m.drug_name as value
+  FROM charts c, medications m
+  WHERE c.chart_id = m.chart_id
+  AND c.chart_id = ?
+)
+ORDER BY cdate ASC;''', (chart_id,chart_id,chart_id ))
    
     data = c.fetchall()
     for row in data:
         print row
+        
     else:
         return 0
 
