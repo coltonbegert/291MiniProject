@@ -32,7 +32,7 @@ def get_age_group():
     '''
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
-    
+
     #get age group
     print "Now we need the age group. To make it homogeneous with the others we have:"
 
@@ -45,8 +45,8 @@ def get_age_group():
     for i in range(1, len(result)+1):
         x = result[i-1]
         print "(" + str(i) + ")  " + str(x)
-    
-    
+
+
     answer = raw_input("Enter your selection: ")
     #if the number entered is out of the range of our options, then keep asking for a correct answer
     while answer not in [str(i) for i in range(1, len(result)+1)]:
@@ -63,7 +63,7 @@ def get_diagnosis():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     print "Now we need the diagnosis. For ease, you may enter one from this list or enter your own:"
-    
+
     # get every diagnosis that we've seen to date
     c.execute('''SELECT DISTINCT diagnosis FROM diagnoses ORDER BY diagnosis''')
     resultat = c.fetchall()
@@ -73,17 +73,17 @@ def get_diagnosis():
     # generate the numbers in the (x) part of the output
     for i in range(1, len(result)+1):
         x = result[i-1]
-        print "(" + str(i) + ")  " + str(x)  
-    
+        print "(" + str(i) + ")  " + str(x)
+
     answer = raw_input("Please enter your selection: ")
     #if the number entered is out of the range of our options, then keep asking for a correct answer
     while answer not in [str(i) for i in range(1, len(result)+1)]:
         print "Please enter an option from the list"
         answer = raw_input("Please enter your selection:")
-    
+
     #map their answer to the entries in result
     diagnosis = result[int(answer)-1]
-    
+
     #if they choose custom
     if answer == str(len(result)):
         diagnosis = raw_input("Please diagnose the patient: ")
@@ -99,10 +99,10 @@ def get_emg_phone(phone):
     emg_phone = raw_input("Please enter emergency contact number.\nIf it's the same as your phone number, just enter 's': ")
     if emg_phone.lower() == 's':
         return phone
-    
+
     #if they didn't enter all digits or if they tried to give us too long of a phone number
     while emg_phone.isdigit() is False or len(emg_phone) >10:
-        
+
         print "\nPlease enter only 10 digits or 's'"
         emg_phone = raw_input("Please enter emergency contact number.\nIf it's the same as your phone number, just enter 's': ")
         if emg_phone.lower() == 's':
@@ -131,30 +131,30 @@ def get_hcno():
     #is that hcno in the database?
     c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno, ))
     result = c.fetchone()
-    
+
     #if the hcno isn't exactly 5 digits or isn't in the database, keep asking
     while len(hcno) != 5 or hcno.isdigit() is False or result == None:
-        
+
         #specific messages for each type of error
         if len(hcno) != 5 or hcno.isdigit() is False:
             print "Health Care Number must be exactly 5 digits"
         elif result == None:
             print "Health Care Number not in system"
-        
+
         #get the hcno again and recheck if it's in the db
         hcno = raw_input("Please enter the patient's health care number: ")
         c.execute('''SELECT * FROM patients WHERE hcno=? ''', (hcno, ))
         result = c.fetchone()
-        
+
     return hcno
-                      
+
 def get_medication():
     '''
     get the medication the doctor chooses to prescribe
     '''
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
-    
+
     #get medication
     print "Now we need the medication. Choose from following list:"
 
@@ -170,14 +170,14 @@ def get_medication():
         print "(" + str(i) + ")  " + str(x)
 
     answer = raw_input("Enter your selection: ")
-    
+
     #if the number entered is out of the range of our options, then keep asking for a correct answer
     while answer not in [str(i) for i in range(1, len(result)+1)]:
         print "Please enter an option from the list"
         answer = raw_input("Enter your selection: ")
 
     medication = result[int(answer)-1]
-    return medication    
+    return medication
 
 
 
@@ -212,7 +212,7 @@ def get_phone():
     gets the phone number of the patient in a format that fits the database schema
     '''
     phone = raw_input("Please enter phone number, format: 00000000000: ")
-    
+
     #only allows length 10 phone numbers made up entirely of digits
     while phone.isdigit() is False or len(phone) != 10:
         if phone.isdigit() is False:
@@ -229,9 +229,9 @@ def get_symptom():
     '''
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
-    
+
     print "Now we need the symptom. For ease, you may enter one from this list or enter your own:"
-    
+
     #list all the symptoms that have been seen so far
     c.execute('''SELECT DISTINCT symptom FROM symptoms ORDER BY symptom''')
     resultat = c.fetchall()
@@ -241,36 +241,36 @@ def get_symptom():
     # generate the numbers in the (x) part of the output
     for i in range(1, len(result)+1):
         x = result[i-1]
-        print "(" + str(i) + ")  " + str(x)  
-    
-    
+        print "(" + str(i) + ")  " + str(x)
+
+
     answer = raw_input("Please enter your selection: ")
-    
+
     #while answer isn't one of the numbers offered, keep pestering until they enter a correct one
     while answer not in [str(i) for i in range(1, len(result)+1)]:
         print "Please enter an option from the list"
         answer = raw_input("Please enter your selection:")
-    
+
     #map their answer to the entries in result
     symptom = result[int(answer)-1]
-    
+
     #if they choose custom
     if answer == str(len(result)):
         symptom = raw_input("Please enter the observed symptom: ")
         while len(symptom) > 15:
             print "Symptom must be shorter than 16 characters"
             symptom = raw_input("Please enter the observed symptom: ")
-    return symptom 
+    return symptom
 
 
 def get_s_med_date(mdate):
     '''
     gets the starting date of a prescribed medication, if it's the same as the date it's being prescribed then user can enter 'S'
     '''
-    
+
     start_med = raw_input("Enter start date of medication in the following format: YYYY-MM-DD HH:MM:SS, \nor enter S if start date is same as prescription date: ")
     sm = start_med.lstrip(' ')
-    
+
     #checks that the format of YYYY-MM-DD HH:MM:SS is not violated if it's a date, or if it's 's', both are acceptable
     while sm.upper() != 'S' and (len(sm) < 17 or sm[4] != '-' or sm[7] != sm[4] or sm[13] != sm[16] or sm[13] != ':'):
         start_med = raw_input("Please enter start date of medication in the following format: YYYY-MM-DD HH:MM:SS, \nor enter S if start date is same as prescription date: ")
@@ -293,7 +293,7 @@ def greeting():
     while answer not in ['1', '2', '3']:
         answer = raw_input( prompt)
     return answer
-   
+
 
 
 def new_chart_ID():
@@ -302,19 +302,19 @@ def new_chart_ID():
     '''
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
-    
+
     for i in range(1, 100000):
         chart_id = str(i).zfill(5) #what zfill(5) does: 1 turns into 00001, 100 turns into 00100, 10000 and higher remain the same
         chart_id_format = (chart_id, )
-        
+
         # is the chart ID already in use?
         c.execute('''SELECT * FROM charts WHERE chart_id=? ''', chart_id_format)
         result = c.fetchone()
-        
+
         #if it isn't then return that unused chart ID
         if result == None:
             return chart_id
-    
+
 
 def parse_file():
     '''
@@ -334,14 +334,13 @@ def parse_file():
 
         conn = sqlite3.connect('./hospital.db')
         c = conn.cursor()
-        
+
         try:
             with open(sql_file_path, 'r') as f:  #open the file and read all the lines
                 lines = f.read()
-            c.executemany(lines) #execute all the lines in the file
+            c.executescript(lines) #execute all the lines in the file
             conn.commit()        #commit the changes
             print "Successfully ran file"
         except:
             print "There was an error processing your request"
     return 0
-
