@@ -3,7 +3,7 @@ import sqlite3
 def Admin():
     # Present the options for admin staff and loop for valid response
     while 0==0:
-        option = raw_input("What would you like to do?\n(1) Create Report\n(2) Prescription information about a drug\n(3) Medication recommendation\n(4) Search for drug applications\n(5) Logout\n:")
+        option = raw_input("What would you like to do?\n\t(1) Report drugs prescribed by Doctors\n\t(2) Prescribing information for drug categories\n\t(3) Medication recommendations for for diagnoses\n\t(4) Search for drug applications\n\t(5) Logout\n:")
         if option == '1':
             drug_prescribed()
         elif option == '2':
@@ -61,6 +61,7 @@ def drug_prescribed():
 
 
 # closes db connection
+    print
     disconnect_db(conn)
 
 
@@ -102,7 +103,7 @@ def prescribed_drugs():
         print "\t",row[1],row[2]
 
 
-
+    print
     disconnect_db(conn)
 
 # Third option for admin, displays all medications that have been used for a diagnoses
@@ -127,6 +128,7 @@ def med_recommend():
     # This problem is a simple print as it just wants the drug names
     for row in result:
         print row[0]
+    print
     disconnect_db(conn)
 # Fourth option for admnin staff, creates a report of the amounts of each use of a drug for different diagnoses
 # Prints average dosing information for length, daily dose and the total that it has been prescribed
@@ -157,5 +159,6 @@ def drug_uses():
     for row in result:
         # print row[0] + ' Taking an average' + row[1] + 'per day for' row[2] + 'days totaling ' +row[2] + 'prescribed'
         print '%s: Taking an average %d units per day for %d days totaling %d units prescribed.' %(row[0],row[1],row[2],row[3])
-
+    print
+    disconnect_db(conn)
 # drug_uses()
