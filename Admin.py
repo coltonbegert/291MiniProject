@@ -118,7 +118,7 @@ def med_recommend():
         WHERE c.chart_id = d.chart_id
         AND m.chart_id = c.chart_id
         AND d.diagnosis = ? COLLATE NOCASE
-        AND m.mdate > d.ddate
+        AND m.mdate >= d.ddate
         GROUP BY m.drug_name
         ORDER BY count(*) DESC;''', ([diagnoses])
     )
@@ -146,7 +146,7 @@ def drug_uses():
         WHERE c.chart_id = d.chart_id
         AND m.chart_id = c.chart_id
         AND m.drug_name = ? COLLATE NOCASE
-        AND m.mdate > d.ddate
+        AND m.mdate >= d.ddate
         GROUP BY d.diagnosis
         ORDER BY prescribeAverage DESC;
 
@@ -158,4 +158,4 @@ def drug_uses():
         # print row[0] + ' Taking an average' + row[1] + 'per day for' row[2] + 'days totaling ' +row[2] + 'prescribed'
         print '%s: Taking an average %d units per day for %d days totaling %d units prescribed.' %(row[0],row[1],row[2],row[3])
 
-# drug_uses()
+drug_uses()
