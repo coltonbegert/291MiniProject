@@ -1,20 +1,8 @@
 import sqlite3
 
 def Admin():
-    print "What would you like to do?\n(1) Create Report\n(2) Prescription information about a drug\n(3) Medication recommendation\n(4) Search for drug applications\n(5) Logout"
-    needInput = True
-    while needInput:
-        option = raw_input("Choose an option: ")
-        if option <='4' or option >'0':
-            needInput = False
-        elif option == "exit":
-            needInput = False
-            break
-        else:
-            print "incorrect option. Try again or type 'exit' to exit"
-            continue
-
-        # print type(option)
+    while 0==0:
+        option = raw_input("What would you like to do?\n(1) Create Report\n(2) Prescription information about a drug\n(3) Medication recommendation\n(4) Search for drug applications\n(5) Logout\n:")
         if option == '1':
             create_report()
         elif option == '2':
@@ -25,6 +13,8 @@ def Admin():
             drug_uses()
         elif option == '5':
             return 0
+        else:
+            print "\nInvalid option\n"
 
 def connect_db(db_name = "./hospital.db"):
     conn = sqlite3.connect(db_name)

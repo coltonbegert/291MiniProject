@@ -1,9 +1,4 @@
 import sqlite3
-from Login import Login
-from Admin import Admin
-import Nurse
-import Doctor
-
 '''
 Contains common functions
 '''
@@ -25,6 +20,7 @@ def get_symptom():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     print "Now we need the symptom. For ease, you may enter one from this list or enter your own:"
+    #list all the symptoms that have been seen so far
     c.execute('''SELECT DISTINCT symptom FROM symptoms ORDER BY symptom''')
     resultat = c.fetchall()
     result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
@@ -35,7 +31,10 @@ def get_symptom():
         x = result[i-1]
         print "(" + str(i) + ")  " + str(x)  
     
+    
     answer = raw_input("Please enter your selection: ")
+    
+    #while answer isn't one of the numbers offered, keep pestering until they enter a correct one
     while answer not in [str(i) for i in range(1, len(result)+1)]:
         print "Please enter an option from the list"
         answer = raw_input("Please enter your selection:")

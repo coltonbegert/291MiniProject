@@ -16,18 +16,21 @@ def Doctor(sid, role):
         if answer == '1': 
             Display_Charts()
         
-        if answer == '2': 
+        elif answer == '2': 
             Record_Symptom(sid, role)
         
-        if answer == '3': 
+        elif answer == '3': 
             Add_Diagnosis(sid)
         
-        if answer == '4': 
+        elif answer == '4': 
             Add_Medication(sid)
         
-        if answer == '5':
+        elif answer == '5':
             print '\nLogging out'
             return 0
+        else:
+            print "\nInvalid option\n"
+        
 
 
 

@@ -16,18 +16,22 @@ def Nurse(role, sid):
         if answer == '1': 
             Create_Chart_Add_Patient()
         
-        if answer == '2': 
+        elif answer == '2': 
             Close_Chart()
         
-        if answer == '3': 
+        elif answer == '3': 
             Doctor.Display_Charts()
         
-        if answer == '4': 
+        elif answer == '4': 
             Doctor.Record_Symptom(sid, role)
         
-        if answer == '5':
+        elif answer == '5':
             print '\nLogging out'
             return 0
+        
+        else:
+            print "\nInvalid option\n"
+        
 
 def Create_Chart_Add_Patient(hcno = None):
     #connect to the database
