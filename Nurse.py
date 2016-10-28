@@ -34,7 +34,7 @@ def Create_Chart_Add_Patient(hcno = None):
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     
-    #checks if the optional argument is blank or not, if it has a hcno provided, it moves straight to checking if there's an open chart
+    #checks if the optional argument is blank or not, if hcno is provided it moves straight to checking if there's an open chart
     if hcno == None:
         #prompts user for health care number
         hcno = utilities.access_hcno()
@@ -48,20 +48,24 @@ def Create_Chart_Add_Patient(hcno = None):
             print "Oops, patient not in database."
             answer = raw_input("Would you like to enter patient into database(y/n)?: ")
             
+            #Enter a valid answer please
             while answer.lower() not in ['y', 'n']:
                 answer = raw_input("Would you like to enter patient into database(y/n)?: ")
-                
+            
+            #    
             if answer.lower() == 'n':
-                Nurse_Option_A() #start the process over again
+                Create_Chart_Add_Patient() #start the process over again
                 return 0
                 
             if answer.lower() == 'y':
+                #get all the required information for a new patient with some mild constraint checking
                 name = utilities.get_name()
                 age_group = utilities.get_age_group()
                 address = utilities.get_address()
                 phone = utilities.get_phone()
                 emg_phone = utilities.get_emg_phone(phone)
                 insertion = [(hcno, name, age_group, address, phone, emg_phone)]
+                #insert the new patient into the database
                 c.executemany('INSERT INTO patients VALUES (?,?,?,?,?,?)', insertion)
                 conn.commit()
             
@@ -93,6 +97,7 @@ def Create_Chart_Add_Patient(hcno = None):
     insertion = [(chart_id, hcno, adate, None)]
     
     try:
+        #create the new chart and print out some neato information about it
         c.executemany('INSERT INTO charts VALUES (?,?,?,?)', insertion) #inserts our newly opened chart into the charts table
         conn.commit()
         print "\nCreated new chart for patient with following information:"
@@ -103,6 +108,7 @@ def Create_Chart_Add_Patient(hcno = None):
         print "----------------------------------------------------------"
         return 0
     except:
+        #there was an error when trying to enter your chart
         print "Something went wrong while storing or printing the chart information"
         return -1    
 
@@ -136,7 +142,7 @@ def Close_Chart():
         answer = raw_input("Would you like to close this chart (y/n)?: ")
         if answer.lower() == 'y':
             edate = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
-            #closes currently open chart
+            #closes currently open chart and stamps it with the current time
             c.execute('UPDATE charts SET edate=:edate WHERE chart_id=:chart_id', {'edate':edate, 'chart_id':chart_id} ) 
             conn.commit()
             print "Chart", chart_id, "closed on date", edate
