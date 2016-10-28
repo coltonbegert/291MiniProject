@@ -45,7 +45,6 @@ def Display_Charts():
     name = str(c.fetchone()).lstrip("(u'").rstrip("',)")
     print "Here are all the charts for", name +':'
 
-    # c.execute(''' select chart_id, adate from (Select chart_id || ' is closed' as chart_id , adate as adate From charts where hcno = ? and edate is not Null UNION Select chart_id || 'is open' as chart_id, adate as adate From charts where hcno = ? and edate is Null) order by adate asc;''',(hcno,hcno))
     # get the charts for a hcno. uses cases to check if there is an edate and return open or closed if there is
     c.execute('''SELECT c.chart_id, c.adate, c.edate, CASE WHEN (c.edate is NULL) THEN 'Open' ELSE 'Closed' END status
     FROM charts c
@@ -53,10 +52,6 @@ def Display_Charts():
     ORDER BY c.adate ASC;''', ([hcno]))
 
     charts = c.fetchall()
-
-
-    # for row in charts:
-    #     print row[0]
 
 
     print "Choose Chart:"
@@ -97,7 +92,10 @@ def Display_Charts():
         ORDER BY cdate ASC;''', ([chart_id, chart_id, chart_id]))
 
         data = c.fetchall()
-        # print "Hello"
+        if data == []:
+            print "No entries in chart\n"
+            return 0
+
         # fancy print for every line in the chart
         for row in data:
             # print data
@@ -111,18 +109,6 @@ def Display_Charts():
 
     else:
         return 0
-
-#    c.execute(''' SELECT * FROM charts c WHERE c.hcno = ? Select * FROM symptoms s where s.hcno=? order by obs_date UNION select * From diagnoses d where d.hcno=? order by ddate UNION select * from medications m where m.hcno = ? order by ddate''', (hcno,hcno, hcno, hcno)) #THIS IS NOT CORRECT
-
-    #charts = c.fetchall()
-    #charts = [str(x).lstrip("(u'").rstrip("',)") for x in charts] #fix the formatting
-
-    ## choose the chart
-    #chart_id = raw_input("Enter the chartID you wish to look up")
-
-    ## gather all entries from selected chart
-
-    #c.execute(''' Select * FROM symptoms order by obs_date group by hcno UNION select * From diagnoses order by ddate group by hcno UNION select * from medications order by ddate group by hcno;''')
 
 def Record_Symptom(staff_id, role):
     #connect to the DB
