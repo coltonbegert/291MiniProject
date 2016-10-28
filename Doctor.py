@@ -46,9 +46,24 @@ def Display_Charts():
     name = str(c.fetchone()).lstrip("(u'").rstrip("',)")
     print "Here are all the charts for", name +':'
     
-    #get info associated with the hcno, in chronological order
-    print "not implemented"
-    return 0
+    c.execute(''' Select chart_id From charts where hcno = ? order by adate;''',(hcno,))
+    charts = c.fetchall()
+    
+    for row in charts:
+        print row[0]
+    
+    chart_id = '10001'
+    
+    
+    answer = raw_input ("Would you like to select a chart: ")
+    #if (answer == 'Y' or answer == 'yes'):
+        #c.execute(''' Select * From symptoms where chart_id = ?   UNION Select * from diagnoses where chart_id = ? UNION Select * From medications where chart_id = ?   order by ddate;''', (chart_id,chart_id,chart_id ))
+   
+    data = c.fetchall()
+    for row in data:
+        print row
+    else:
+        return 0
 
 #    c.execute(''' SELECT * FROM charts c WHERE c.hcno = ? Select * FROM symptoms s where s.hcno=? order by obs_date UNION select * From diagnoses d where d.hcno=? order by ddate UNION select * from medications m where m.hcno = ? order by ddate''', (hcno,hcno, hcno, hcno)) #THIS IS NOT CORRECT
     
@@ -232,3 +247,6 @@ def allergy_check(hcno):
             return 'exit'
         
     return medication
+
+role = 'D'
+Doctor(14434, role)
