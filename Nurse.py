@@ -6,8 +6,7 @@ import utilities
 
 def Nurse(role, sid):
     while 0==0:
-        print"option 1, 2 and 5 work for now"
-        answer = raw_input("What option would you like to choose?\n\
+        answer = raw_input("\nWhat option would you like to choose?\n\
         (1) Create a new chart/add a patient\n\
         (2) Close a patient's chart\n\
         (3) Display Chart information for a patient\n\
@@ -21,7 +20,7 @@ def Nurse(role, sid):
             Close_Chart()
         
         if answer == '3': 
-            Doctor.Display_Charts(sid)
+            Doctor.Display_Charts()
         
         if answer == '4': 
             Doctor.Record_Symptom(sid, role)

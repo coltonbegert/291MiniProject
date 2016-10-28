@@ -5,7 +5,7 @@ import Nurse
 
 def Doctor(sid, role):
     while 0==0:
-        print"option 2, 3 and 5 work for now"
+        print"option 2, 3, 4 and 5 work for now"
         answer = raw_input("What option would you like to choose?\n\
         (1) Display Chart information for a patient\n\
         (2) Record a symptom\n\
@@ -96,9 +96,6 @@ def Record_Symptom(staff_id, role):
     except:
         print "There was an error processing your request"
 
-
-
-
 def Add_Diagnosis(staff_id):
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
@@ -135,23 +132,22 @@ def Add_Medication(staff_id):
     else:
         chart_id = str(result).lstrip("(u'").rstrip("',)") 
     
-    c.execute(''' select distinct symptom from symptoms where chart_id = ?''', (chart_id,))
-    result = c.fetchall()
-    if result != None:
-        print result
-        for entry in result:
-            print entry[0]
-        
     c.execute(''' select name from patients where hcno=? ''', (hcno,))
     name = str(c.fetchone()).lstrip("(u'").rstrip("',)") 
         
-    print "Fetched open chart with chart ID", chart_id, "\nPatient name:", name
+    print "\nFetched open chart with chart ID", chart_id, "\nPatient name:", name    
     
-    medication = utilities.get_medication()
-    mdate = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
-    
-    start_med_date = utilities.get_s_med_date(mdate)
-    end_med_date = utilities.get_e_med_date()
+    c.execute(''' select distinct symptom from symptoms where chart_id = ?''', (chart_id,))
+    result = c.fetchall()
+    if result != []:
+        print "\nCurrently reported symptoms are as follows:"
+        for entry in result:
+            print entry[0]
+        print '\n'
+    else:
+        print "\nNo symptoms currently related to this chart\n"
+        
+    medication = allergy_check(hcno)
     amount = raw_input("\nPlease enter the amount of medication you wish to prescribe: ")
     
     #lookup suggested dose of specific medication for age range of the patient
@@ -173,74 +169,46 @@ def Add_Medication(staff_id):
             amount = raw_input("Please enter the amount of medication you wish to prescribe or type exit: ")
             if amount.lower() == 'exit':
                 return 'early end'
-        
-    
-    return 0
-        
-    
-    
-    
-    
-    
-        
-        
-        
-        
-        
-    insertion = [(hcno, chart_id, staff_id, mdate, medication)]
-    print insertion
+
+
+    mdate = strftime("%Y-%m-%d %H:%M:%S", gmtime()) #current time
+            
+    start_med_date = utilities.get_s_med_date(mdate)
+    end_med_date = utilities.get_e_med_date()       
+    insertion = [(hcno, chart_id, staff_id, mdate, start_med_date, end_med_date, amount, medication)]
+
     try:
-        c.executemany(''' INSERT into diagnoses VALUES (?,?,?,?,?)''', insertion)
+        c.executemany(''' INSERT into medications VALUES (?,?,?,?,?,?,?,?)''', insertion)
         conn.commit()
         print "Entry added"
     except:
         print "There was an error processing your request"    
+
+
+def allergy_check(hcno):
+    conn = sqlite3.connect("./hospital.db")
+    c = conn.cursor()    
+    medication = utilities.get_medication()
+    c.execute('''Select drug_name from reportedallergies where hcno=? and drug_name=?''', (hcno, medication))
+    reportedallergies = c.fetchone()
+    c.execute('''SELECT canbe_alg FROM reportedallergies r, inferredallergies i WHERE r.drug_name = i.alg and r.hcno=? and i.canbe_alg=?''', (hcno,medication))
+    canbe_alg = c.fetchone()
     
-    
-    #Additional Checks
-
-
-    c.execute('Select amount from medications where hcno = hcno  ', {'hcno',result})
-
-    prescribedAmount = c.fetchall
-
-    c.execute(''' Select sug_amount from dosage where age_group = age;''')
-    recomendedAmount = c.fetchall
-
-
-    
-    if (prescribedAmount > recomendedAmount):
-        print("WARNING")
-
-    
-    print("Would you like to Change perscription")
-    change= raw_input("Enter Yes or NO") 
-    
-    if (change == 'Yes'):
-        # change perscription
-        print("flag")
-    
-    # get allergy data
-    
-    c.execute(''' select drug_name from reportedallergies where hcno = hcno''')
-
-    print("WARNING")
-    print("Patient is allergic to " + drugName)
-    
-    # get possible allergies 
-    c.execute(''' SELECT canbe_alg from inferredallergies where alg = drugName;''')
-    
-    print("Patient may be allegic to " + inferedAllergy + " inferred from" + drugName) 
-
-
-    mdate = strftime("%A, %d %B %Y %H:%M:%S", gmtime())
-
-    # pass staff_id
-
-    start_med = raw_input("Enter start date")
-    end_med = raw_input("Enter end date")
-    amount = raw_input("Enter amount")
-    drug_name = raw_input("Enter drug_name")
-
-    c.execute(''' Insert Into medications (hcno, chart_id, staff_id, mdate, start_med, end_med, amount, drug_name ''')
-    
+    if reportedallergies != None:
+        print "Patient has reported an allergy to", medication
+        answer = raw_input("Would you like to change the drug prescription? (y/n/exit): ")
+        if answer.lower() == 'y':
+            return allergy_check(hcno)
+        elif answer.lower() == 'exit':
+            return 'exit'
+        
+    elif canbe_alg != None:
+        allergy = str(canbe_alg).lstrip("(u'").rstrip("',)")
+        print "Patient has a possible allergy to", allergy
+        answer = raw_input("Would you like to change the drug prescription? (y/n/exit): ")
+        if answer.lower() == 'y':
+            return allergy_check(hcno)
+        elif answer.lower() == 'exit':
+            return 'exit'
+        
+    return medication
