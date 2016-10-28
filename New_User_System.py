@@ -1,5 +1,9 @@
 import sqlite3
 from hashlib import sha224
+'''
+If you implement exit in the other functions then you can change these to those ones, otherwise, leave that alone
+'''
+
 def New_User_System():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()    
@@ -11,8 +15,8 @@ def New_User_System():
         staff_id = raw_input("\nEnter desired Staff ID: ")
         if staff_id.lower() == 'exit':
             return 'exit'
-        formatting = (staff_id, )                                           #haaaate the formatting here, but couldn't do it any other way (to my knowledge)
-        c.execute("SELECT * FROM staff WHERE staff_id=? ", formatting)      #if the ID is in the DB already, this will return the info on that person
+        
+        c.execute("SELECT * FROM staff WHERE staff_id=? ", (staff_id, ))      #if the ID is in the DB already, this will return the info on that person
         row = c.fetchone()
         
         #staff ID must be at most 5 characters that are numbers and the id can't already exist
@@ -28,8 +32,7 @@ def New_User_System():
             if staff_id.lower() == 'exit':
                 return 'exit'
             
-            formatting = (staff_id, )
-            c.execute("SELECT * FROM staff WHERE staff_id=? ", formatting)
+            c.execute("SELECT * FROM staff WHERE staff_id=? ", (staff_id, ))
             row = c.fetchone()                   
             
         '''
@@ -78,7 +81,7 @@ def New_User_System():
         '''
         PASSWORD
         '''
-        password = sha224(raw_input("\nEnter desired password: ")).hexdigest()        # immediately encodes entered password
+        password = sha224(raw_input("\nEnter desired password: ")).hexdigest()           # encodes entered password
         accept = raw_input("Do you want to accept these changes (Y/N/exit)?: ")          # if Y, then user is inserted, if N then it starts the new user process again
         if accept.lower() == 'exit':
             return 'exit'

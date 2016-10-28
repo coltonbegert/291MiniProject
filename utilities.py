@@ -147,7 +147,7 @@ def get_hcno():
         result = c.fetchone()
         
     return hcno
-
+                      
 def get_medication():
     '''
     get the medication the doctor chooses to prescribe

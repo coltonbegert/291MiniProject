@@ -63,25 +63,40 @@ def Display_Charts():
     #c.execute(''' Select * FROM symptoms order by obs_date group by hcno UNION select * From diagnoses order by ddate group by hcno UNION select * from medications order by ddate group by hcno;''')
 
 def Record_Symptom(staff_id, role):
+    #connect to the DB
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
+    #get the hcno of a patient that exists in the db
     hcno = utilities.get_hcno()
-    c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
+    
+    #does that patient have an open chart?
+    c.execute(''' select chart_id from charts where hcno=? AND edate is Null;''', (hcno,))
     result = c.fetchone()
+    
+    # if they have no open chart take this path, otherwise go right to entering the symptom
+    # this allows only a nurse to take the first nurse option, which is to open a chart and then continue along the process
+    # of adding a patient, while a doctor is not allowed to open a new chart
     if result == None:
         print "No open chart for given Health Care Number"
         if role == 'N':
             answer = raw_input("Would you like to open a chart for this patient?(y/n): ")
+            
+            #opens a new chart for this patient
             if answer.lower() == 'y':
                 Nurse.Create_Chart_Add_Patient(hcno)
+            
+            #exits to action screen    
             elif answer.lower() == 'n':
                 print "No chart created and no symptom recorded"
                 return 0
             
             answer = raw_input("Continue adding symptom for patient?(y/n): ")
+            #exits to action screen
             if answer.lower() == 'n':
                 return 0
-            c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
+            
+            #get the chart ID of the newly opened chart
+            c.execute(''' select chart_id from charts where hcno=? AND edate is Null;''', (hcno,))
             result = c.fetchone()
             chart_id = str(result).lstrip("(u'").rstrip("',)")
             
@@ -103,7 +118,7 @@ def Add_Diagnosis(staff_id):
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     hcno = utilities.get_hcno()
-    c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
+    c.execute(''' select chart_id from charts where hcno=? AND edate is Null;''', (hcno,))
     result = c.fetchone()
     if result == None:
         print "No open chart for given Health Care Number"
@@ -127,7 +142,7 @@ def Add_Medication(staff_id):
     
     # get the health care number
     hcno = utilities.get_hcno()    
-    c.execute(''' select chart_ID from charts where hcno=? AND edate is Null;''', (hcno,))
+    c.execute(''' select chart_id from charts where hcno=? AND edate is Null;''', (hcno,))
     result = c.fetchone()
     if result == None:
         print "\nNo open chart for given Health Care Number"

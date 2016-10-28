@@ -6,6 +6,7 @@ def Build_Database(test_data_path = './a3-data.sql'):
     c = conn.cursor()
     
     c.execute(' PRAGMA forteign_keys=ON; ') ## WHY DOES THIS STATEMENT WORK????? foreign is mispelled, but if I spell it as foreign, I get the error: sqlite3.IntegrityError: FOREIGN KEY constraint failed
+    ## Didn't find a single result on google for "Pragma forteign_keys=ON" but it's also the way it's implemented in the test file they gave us for the lab
     conn.commit()
 
     with open('./hospital.sql', 'r') as f:  #build the database structure
