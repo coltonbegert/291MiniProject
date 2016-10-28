@@ -1,6 +1,9 @@
 import sqlite3
 from hashlib import sha224
 from New_User_System import New_User_System
+import Doctor
+import Nurse
+from Admin import Admin
 '''
 Login function returns the staff_id and role of whoever ended up logging in
 '''
@@ -37,3 +40,23 @@ def Login():
             print "Welcome", str(row[2]), '\n'
             login_success = True
             return str(row[0]), str(row[1])
+
+
+def Login_system():
+    
+    '''
+    Handles logging in, passes control to Login() to get valid login information, which then returns the staff_id and role of who logged in. 
+    Then it decides what to run based on the role receieved in the login process.
+    '''
+    while 0==0:
+        staff_id, role = Login()
+        if role == 'A':
+            Admin()
+        elif role == 'D':
+            Doctor.Doctor(staff_id, role)
+        elif role == 'N':
+            Nurse.Nurse(staff_id, role)
+        elif role == 'S':
+            return 'Shutdown'
+        elif role == 0:
+            return 0

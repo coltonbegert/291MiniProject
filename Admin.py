@@ -1,7 +1,7 @@
 import sqlite3
 
 def Admin():
-    print "What would you like to do?\n1) Create Report\n2) Prescription information about a drug\n3) Medication recommendation\n4) Search for drug applications\n"
+    print "What would you like to do?\n(1) Create Report\n(2) Prescription information about a drug\n(3) Medication recommendation\n(4) Search for drug applications\n(5) Logout"
     needInput = True
     while needInput:
         option = raw_input("Choose an option: ")
@@ -23,6 +23,8 @@ def Admin():
             med_recommend()
         elif option == '4':
             drug_uses()
+        elif option == '5':
+            return 0
 
 def connect_db(db_name = "./hospital.db"):
     conn = sqlite3.connect(db_name)

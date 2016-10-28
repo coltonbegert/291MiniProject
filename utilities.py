@@ -294,25 +294,6 @@ def parse_file():
             print "There was an error processing your request"
     return 0
 
-def Login_system():
-    
-    '''
-    Handles logging in, passes control to Login() to get valid login information, which then returns the staff_id and role of who logged in. 
-    Then it decides what to run based on the role receieved in the login process.
-    '''
-    while 0==0:
-        staff_id, role = Login()
-        if role == 'A':
-            Admin()
-        elif role == 'D':
-            Doctor.Doctor(staff_id, role)
-        elif role == 'N':
-            Nurse.Nurse(staff_id, role)
-        elif role == 'S':
-            return 'Shutdown'
-        elif role == 0:
-            return 0
-
 def greeting():
     '''
     Just to clean up the code in hospital.py

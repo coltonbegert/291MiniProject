@@ -1,7 +1,8 @@
 import sqlite3
 import sys
 from Build_database import Build_Database
-from utilities import parse_file, Login_system, greeting
+from utilities import parse_file, greeting
+from Login import Login_system
 
 
 
@@ -14,8 +15,13 @@ To run using data supplied by the TA today, run it as:
 Python2 hospital.py Class_Test_Data_P1.sql
 
 I changed some of the user's logins so that we can still use the same
-Nurse
-Npassword
+
+#login: Nurse
+#password: Npassword
+#login: Admin
+#password: Apassword
+#login: Doctor
+#password: Dpassword
 
 thing for each of the different types of person
 '''
@@ -42,16 +48,16 @@ def main(argv):
         answer = greeting()
 
         if answer == '1':
-            x = Login_system() #x will return as 'S' if the user wants to shut down the system
+            x = Login_system() #x will return as 'Shutdown' if the user wants to shut down the system
             if x is not None:
                 if x == 'Shutdown':
-                    return 0
+                    return x
 
         elif answer == '2':
             parse_file()
 
         elif answer == '3':
-            return 0
+            return 'Shutdown'
 
 
 if __name__ == '__main__':
