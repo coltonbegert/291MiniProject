@@ -36,6 +36,9 @@ thing for each of the different types of person
 #password: Dpassword
 
 def main(argv):
+    
+    #takes the first command line argument as an optional path for data, if blank, then the default data is our test data
+    #uses the given schema from project specifications to build the database    
     try:
         Build_Database(argv[1])
         print "building database from data at", argv[1]
@@ -45,17 +48,22 @@ def main(argv):
     print "\nWelcome."
 
     while 0 == 0:
+        #greeting is a message about which option the user would like to choose, it also ensures the user only picks a valid option and then returns that answer
         answer = greeting()
 
+        #Login
         if answer == '1':
             x = Login_system() #x will return as 'Shutdown' if the user wants to shut down the system
             if x is not None:
                 if x == 'Shutdown':
                     return x
-
+                
+        #specify the path of an sql file that should be read (not for queries).
+        #typical form: ./my_file.sql
         elif answer == '2':
             parse_file()
 
+        #shut down the system entirely
         elif answer == '3':
             return 'Shutdown'
 
