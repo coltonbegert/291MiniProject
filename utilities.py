@@ -26,6 +26,31 @@ def get_address():
         address = raw_input("Please enter their address: ")
     return address
 
+def get_Admin_diagnosis():
+    conn = sqlite3.connect("./hospital.db")
+    c = conn.cursor()
+    print "\nPlease select a diagnosis from this list:"
+
+    # get every diagnosis that we've seen to date
+    c.execute('''SELECT DISTINCT diagnosis FROM diagnoses ORDER BY diagnosis''')
+    resultat = c.fetchall()
+    result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+
+    # generate the numbers in the (x) part of the output
+    for i in range(1, len(result)+1):
+        x = result[i-1]
+        print "(" + str(i) + ")  " + str(x)
+
+    answer = raw_input("Please enter your selection: ")
+    #if the number entered is out of the range of our options, then keep asking for a correct answer
+    while answer not in [str(i) for i in range(1, len(result)+1)]:
+        print "Please enter an option from the list"
+        answer = raw_input("Please enter your selection:")
+
+    #map their answer to the entries in result
+    diagnosis = result[int(answer)-1]
+    return diagnosis    
+
 def get_age_group():
     '''
     get the age_group of the user in a format that fits the database schema

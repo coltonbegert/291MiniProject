@@ -1,4 +1,5 @@
 import sqlite3
+import utilities
 
 def Admin():
     # Present the options for admin staff and loop for valid response
@@ -29,11 +30,26 @@ def disconnect_db(conn):
 # the first option for admin creates a report of the amount of each drug prescribed over a time period
 # The amount is the amount per day x the number of days taking the drug
 def drug_prescribed():
-    print "Define time period"
+    print "\nDefine time period"
+    
+    #get a correctly formatted date
     start_date = raw_input("Enter start of time period (YYYY-MM-DD): ")
-    end_date = raw_input("Enter end of time period (YYYY-MM-DD): ")
-    # start_date = '2000-01-01'
-    # end_date = 'now'
+    sd = start_date.lstrip(' ')
+    while sd[4] != '-' or sd[7] != sd[4] or len(sd) != 10:
+        print "Please enter a date in a valid form"
+        start_date = raw_input("Enter start of time period (YYYY-MM-DD): ")
+        sd = start_date.lstrip(' ')
+    start_date = sd
+    
+    #get a correctly formatted date
+    end_date = raw_input("\nEnter end of time period (YYYY-MM-DD): ")
+    ed = end_date.lstrip(' ')
+    while ed[4] != '-' or ed[7] != ed[4] or len(ed) != 10:
+        print "Please enter a date in a valid form"
+        end_date = raw_input("Enter end of time period (YYYY-MM-DD): ")
+        ed = end_date.lstrip(' ')    
+    end_date = ed
+    
     conn, c = connect_db()
 
 # SQL statement for pulling the amount and name of each drug that a doctor prescribes over a time period.
@@ -48,9 +64,16 @@ def drug_prescribed():
         HAVING s.role = 'D'
         ORDER BY s.name;''', (start_date,end_date))
 
-# uses the values returned form the sql statement
-# only prints doctors name once and indents all drugs and the total amount of all medication prescribed in range
+
     result = c.fetchall()
+    
+    if result == []:
+        print "\nNo drugs found for that time period\n"
+        return 0
+    
+    # uses the values returned form the sql statement
+    # only prints doctors name once and indents all drugs and the total amount of all medication prescribed in range    
+    print "\nAmount of each drug prescribed by each doctor in that time period:"
     last_name = ""
     for row in result:
         if row[0] != last_name:
@@ -70,10 +93,26 @@ def drug_prescribed():
 def prescribed_drugs():
     conn,c = connect_db()
 # gets user input for date range
+    print "\nDefine time period"
+    
+    #get a correctly formatted date
     start_date = raw_input("Enter start of time period (YYYY-MM-DD): ")
-    end_date = raw_input("Enter end of time period (YYYY-MM-DD): ")
-    # start_date = '2000-01-01'
-    # end_date = 'now'
+    sd = start_date.lstrip(' ')
+    while sd[4] != '-' or sd[7] != sd[4] or len(sd) != 10:
+        print "Please enter a date in a valid form"
+        start_date = raw_input("Enter start of time period (YYYY-MM-DD): ")
+        sd = start_date.lstrip(' ')
+    start_date = sd
+    
+    #get a correctly formatted date
+    end_date = raw_input("\nEnter end of time period (YYYY-MM-DD): ")
+    ed = end_date.lstrip(' ')
+    while ed[4] != '-' or ed[7] != ed[4] or len(ed) != 10:
+        print "Please enter a date in a valid form"
+        end_date = raw_input("Enter end of time period (YYYY-MM-DD): ")
+        ed = end_date.lstrip(' ')    
+    end_date = ed
+    
     conn, c = connect_db("./hospital.db")
 
 # SQL statement for getting the report
@@ -93,7 +132,12 @@ def prescribed_drugs():
         ORDER BY d.category;''', (start_date,end_date,start_date,end_date))
 
     result = c.fetchall()
-
+    
+    if result == []:
+        print "\nNo drugs found in that time period\n"
+        return 0
+    
+    print "\nTotal amount of each drug prescribed in that time period, by category of drug:\n"
     # formats and prints the SQL results in  a nice way by displaying the category only once
     last_name = ""
     for row in result:
@@ -110,7 +154,7 @@ def prescribed_drugs():
 def med_recommend():
     conn,c = connect_db()
 
-    diagnoses = raw_input("Enter a diagnoses: ")
+    diagnosis = utilities.get_Admin_diagnosis()
 # SQL Staement for getting the drugs that have been prescribed after a diagnoses
 # COLLATE NOCASE makes the drug names case insensitive for search purposes
 # gorupby and order by gives us an easy way to split each use of the drug for a diagnoses and order them by frequency
@@ -121,24 +165,28 @@ def med_recommend():
         AND d.diagnosis = ? COLLATE NOCASE
         AND m.mdate >= d.ddate
         GROUP BY m.drug_name
-        ORDER BY count(*) DESC;''', ([diagnoses])
+        ORDER BY count(*) DESC;''', ([diagnosis])
     )
 
     result = c.fetchall()
+    
+    if result == []:
+        print "\nNo medications can be suggested\n"
+        return 0
+    
     # This problem is a simple print as it just wants the drug names
+    print "\nAll possible medications that have been prescribed over time after that diagnosis:\n"
     for row in result:
         print row[0]
     print
     disconnect_db(conn)
+    
 # Fourth option for admnin staff, creates a report of the amounts of each use of a drug for different diagnoses
 # Prints average dosing information for length, daily dose and the total that it has been prescribed
 def drug_uses():
     conn,c = connect_db()
 
-    drug = raw_input("Enter a Drug: ")
-
-    # http://stackoverflow.com/questions/4517681/sql-sum-with-condition
-    # drug = 'ZMapp'
+    drug = utilities.get_medication()
 
 # SQL Statemnt for getting the data.
 # Uses the same method for determing the duration and total amounts of drugs prescribed for option 1(create)
@@ -154,8 +202,14 @@ def drug_uses():
 
     ''', ([drug]))
 
-# fancy printing only to make the results nicely readable.
+
     result = c.fetchall()
+    if result == []:
+        print "\nNo diagnoses found\n"
+        return 0
+    
+    # fancy printing only to make the results nicely readable.
+    print "\nAll the diagnoses that have been made before prescribing this drug:\n"
     for row in result:
         # print row[0] + ' Taking an average' + row[1] + 'per day for' row[2] + 'days totaling ' +row[2] + 'prescribed'
         print '%s: Taking an average %d units per day for %d days totaling %d units prescribed.' %(row[0],row[1],row[2],row[3])
