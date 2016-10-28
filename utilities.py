@@ -1,6 +1,8 @@
 import sqlite3
 from Login import Login
+from Admin import Admin
 import Nurse
+import Doctor
 
 '''
 Contains common functions
@@ -23,7 +25,7 @@ def get_symptom():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     print "Now we need the symptom. For ease, you may enter one from this list or enter your own:"
-    c.execute('''SELECT DISTINCT symptom FROM symptoms;''')
+    c.execute('''SELECT DISTINCT symptom FROM symptoms ORDER BY symptom''')
     resultat = c.fetchall()
     result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
     result.append("Custom") #add the option to add a custom symptom to the database
@@ -53,9 +55,9 @@ def get_diagnosis():
     conn = sqlite3.connect("./hospital.db")
     c = conn.cursor()
     print "Now we need the diagnosis. For ease, you may enter one from this list or enter your own:"
-    c.execute('''SELECT DISTINCT diagnosis FROM diagnoses;''')
+    c.execute('''SELECT DISTINCT diagnosis FROM diagnoses ORDER BY diagnosis''')
     resultat = c.fetchall()
-    result = [x.lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
+    result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
     result.append("Custom") #add the option to add a custom diagnosis to the database
 
     # generate the numbers in the (x) part of the output
@@ -74,7 +76,7 @@ def get_diagnosis():
     #if they choose custom
     if answer == str(len(result)):
         diagnosis = raw_input("Please diagnose the patient: ")
-        while len(symptom) > 20:
+        while len(diagnosis) > 20:
             print "Diagnosis must be shorter than 21 characters"
             diagnosis = raw_input("Please diagnose the patient: ")
     return diagnosis
@@ -107,7 +109,7 @@ def get_medication():
     print "Now we need the medication. Choose from following list:"
 
     #find all the current medications in the database
-    c.execute('''SELECT DISTINCT drug_name FROM medications''')
+    c.execute('''SELECT DISTINCT drug_name FROM drugs ORDER BY drug_name''')
 
     resultat = c.fetchall()
     result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
@@ -182,7 +184,7 @@ def get_age_group():
 
     #find all the current age groups in the database
     c.execute('''
-    SELECT DISTINCT age_group FROM patients ORDER BY age_group ;
+    SELECT DISTINCT age_group FROM dosage ORDER BY age_group ;
     ''')
     resultat = c.fetchall()
     result = [str(x).lstrip("(u'").rstrip("',)") for x in resultat] #get rid of the annoying formatting they seem to come with
@@ -301,15 +303,11 @@ def Login_system():
     while 0==0:
         staff_id, role = Login()
         if role == 'A':
-            pass
-            #Admin(staff_id)
-
-        # Needs to be implemented as 'A' --> Admin(staff_ID) and ('D', 'N') ---> Care_Staff(role, staff_ID) as per the requirements
+            Admin()
         elif role == 'D':
-            pass
-            #Doctor(staff_id)
+            Doctor.Doctor(staff_id, role)
         elif role == 'N':
-            Nurse.Nurse(staff_id)
+            Nurse.Nurse(staff_id, role)
         elif role == 'S':
             return 'Shutdown'
         elif role == 0:

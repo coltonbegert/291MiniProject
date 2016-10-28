@@ -1,18 +1,23 @@
 import sqlite3
 import sys
-from hashlib import sha224
 from Build_database import Build_Database
-from Nurse import Nurse
 from utilities import parse_file, Login_system, greeting
 
-
-#from Admin import Admin
-#from Doctor import Doctor
 
 
 '''
 When run from terminal, type $ python2 hospital.py ./My_different_data.sql to load the database with alternate data.
 if no second path is supplied, data will default to our fake test data
+
+To run using data supplied by the TA today, run it as:
+
+Python2 hospital.py Class_Test_Data_P1.sql
+
+I changed some of the user's logins so that we can still use the same
+Nurse
+Npassword
+
+thing for each of the different types of person
 '''
 
 #try logging in  with one of:
@@ -30,7 +35,8 @@ def main(argv):
         print "building database from data at", argv[1]
     except:
         Build_Database()
-    print "\n\nWelcome."
+        print "Built database using fake test data"
+    print "\nWelcome."
 
     while 0 == 0:
         answer = greeting()

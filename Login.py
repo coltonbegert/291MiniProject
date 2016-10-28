@@ -26,6 +26,7 @@ def Login():
             continue                                                                        #return to login segment
         
         en_pass = sha224(raw_input("Please enter your password: ")).hexdigest()             #encodes password
+        
         #check if supplied username and password are from a user in the db
         c.execute("SELECT staff_id, role, name FROM staff WHERE login=:login and password=:password", {"login": login , "password": en_pass})
         row=c.fetchone()
@@ -33,6 +34,6 @@ def Login():
             print "\nError: User not in database"
         else:
             print "\nLogged in as ID: " + str(row[0]) + " with role " + str(row[1])
-            print "Welcome", str(row[2])
+            print "Welcome", str(row[2]), '\n'
             login_success = True
             return str(row[0]), str(row[1])

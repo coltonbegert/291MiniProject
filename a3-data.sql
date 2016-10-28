@@ -185,8 +185,8 @@ INSERT INTO dosage VALUES
 ("ZMapp", "40-59", "12"),
 ("ZMapp", "60-99", "16"),
 ("TKM-Ebola", "18-39", "30"),
-("TKM-Ebola", "21-59", "45"),
-("TKM-Ebola", "25-99", "50"),
+("TKM-Ebola", "40-59", "45"),
+("TKM-Ebola", "60-99", "50"),
 
 ("Doxycycline", "18-39", "15"),
 ("Doxycycline", "40-59", "20"),

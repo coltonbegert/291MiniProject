@@ -1,7 +1,7 @@
 import sqlite3
 
 def Admin():
-    print "1) Create Report\n2) prescribed\n3) medication recommendation\n4) Search for drug applications\n"
+    print "What would you like to do?\n1) Create Report\n2) Prescription information about a drug\n3) Medication recommendation\n4) Search for drug applications\n"
     needInput = True
     while needInput:
         option = raw_input("Choose an option: ")
@@ -146,5 +146,3 @@ def drug_uses():
     result = c.fetchall()
     for row in result:
         print row[0]
-
-Admin()
