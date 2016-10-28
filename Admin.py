@@ -158,4 +158,4 @@ def drug_uses():
         # print row[0] + ' Taking an average' + row[1] + 'per day for' row[2] + 'days totaling ' +row[2] + 'prescribed'
         print '%s: Taking an average %d units per day for %d days totaling %d units prescribed.' %(row[0],row[1],row[2],row[3])
 
-drug_uses()
+# drug_uses()
