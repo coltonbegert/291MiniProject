@@ -148,6 +148,8 @@ def Add_Medication(staff_id):
         print "\nNo symptoms currently related to this chart\n"
         
     medication = allergy_check(hcno)
+    if medication == 'exit':
+        return 0
     amount = raw_input("\nPlease enter the amount of medication you wish to prescribe: ")
     
     #lookup suggested dose of specific medication for age range of the patient
