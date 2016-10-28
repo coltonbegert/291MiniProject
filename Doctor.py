@@ -46,6 +46,7 @@ def Display_Charts():
     print "Here are all the charts for", name +':'
 
     # c.execute(''' select chart_id, adate from (Select chart_id || ' is closed' as chart_id , adate as adate From charts where hcno = ? and edate is not Null UNION Select chart_id || 'is open' as chart_id, adate as adate From charts where hcno = ? and edate is Null) order by adate asc;''',(hcno,hcno))
+    # get the charts for a hcno. uses cases to check if there is an edate and return open or closed if there is
     c.execute('''SELECT c.chart_id, c.adate, c.edate, CASE WHEN (c.edate is NULL) THEN 'Open' ELSE 'Closed' END status
     FROM charts c
     WHERE c.hcno = ?
@@ -59,32 +60,35 @@ def Display_Charts():
 
 
     print "Choose Chart:"
-
+    # prints the charts form the previous query
     for i in range(len(charts)):
         print "\t(%d) Chart: %s with Status: %s " %(i+1, charts[i][0], charts[i][3])
     print ("\t(%d) Cancel" %(len(charts)+1))
 
 
-
+    # gets the chart to expnd. the last option returns
     chart_id = eval(raw_input ("Choose Chart ID: ")) -1
     if (chart_id != len(charts)):
         # chart_id = raw_input("Which Chart would you to look at: ")
         chart_id = str(charts[chart_id][0])
-        c.execute('''SELECT type, cdate, value, name
+        # gets all of the entries in the charts
+        # gets the union of all entries by renaming colums to make them union compatible
+        # orders the columns by the date they were added
+        c.execute('''SELECT type, cdate, value, name, startdate, enddate, Mamount
         FROM (
-          SELECT 'Symptom' as type, s.obs_date as cdate, s.symptom as value, st.name as name
+          SELECT 'Symptom' as type, s.obs_date as cdate, s.symptom as value, st.name as name, NULL as startdate, NULL as enddate, NULL as Mamount
           FROM charts c, symptoms s, staff st
           WHERE c.chart_id = s.chart_id
           AND c.chart_id = (?)
           AND st.staff_id = s.staff_id
           UNION
-          SELECT 'Diagnosis' as type, d.ddate as cdate, d.diagnosis as value, s.name as name
+          SELECT 'Diagnosis' as type, d.ddate as cdate, d.diagnosis as value, s.name as name, NULL as startdate, NULL as enddate, NULL as Mamount
           FROM charts c, diagnoses d, staff s
           WHERE c.chart_id = d.chart_id
           AND c.chart_id = (?)
           AND s.staff_id = d.staff_id
           UNION
-          SELECT 'Medication' as type, m.mdate as cdate, m.drug_name as value, s.name as name
+          SELECT 'Medication' as type, m.mdate as cdate, m.drug_name as value, s.name as name, m.start_med as startdate, m.end_med as enddate, m.amount as Mamount
           FROM charts c, medications m, staff s
           WHERE c.chart_id = m.chart_id
           AND c.chart_id = (?)
@@ -94,9 +98,14 @@ def Display_Charts():
 
         data = c.fetchall()
         # print "Hello"
+        # fancy print for every line in the chart
         for row in data:
             # print data
-            print "\tA %s, %s, was recorded on %s by %s" %(row[0], row[2], row[1], row[3])
+            if row[4] != None:
+                med = str(" from " + str(row[4]) + " to " + str(row[5]) + " with a dose of " + str(row[6]) + " units")
+            else:
+                med = ""
+            print "\tA %s, %s, was recorded on %s by %s%s" %(row[0], row[2], row[1], row[3], med)
         print
         return 1
 
