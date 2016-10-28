@@ -21,7 +21,7 @@
 
 
 
-SELECT c.chart_id, c.adate, c.edate
+SELECT c.chart_id, c.adate, c.edate, CASE WHEN (c.edate is NULL) THEN 'open' ELSE 'closed' END status
 FROM charts c
 WHERE c.hcno = '15384'
 ORDER BY c.adate DESC;
